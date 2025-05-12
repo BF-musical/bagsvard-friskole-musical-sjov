@@ -5,8 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { getContactData } from '@/utils/dataUtils';
 
 const Contact = () => {
+  const contactData = getContactData();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -34,8 +36,8 @@ const Contact = () => {
     <section id="contact" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 musical-header">Kontakt</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">Har du spørgsmål om forestillingen? Kontakt os!</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 musical-header">{contactData.title}</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">{contactData.subtitle}</p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-10 max-w-4xl mx-auto">
@@ -48,7 +50,7 @@ const Contact = () => {
                   <label htmlFor="name" className="block text-sm font-medium mb-1">Navn</label>
                   <Input 
                     id="name" 
-                    placeholder="Dit navn" 
+                    placeholder={contactData.form.namePlaceholder}
                     required 
                     className="w-full"
                   />
@@ -59,7 +61,7 @@ const Contact = () => {
                   <Input 
                     id="email" 
                     type="email" 
-                    placeholder="din@email.dk" 
+                    placeholder={contactData.form.emailPlaceholder}
                     required 
                     className="w-full"
                   />
@@ -69,7 +71,7 @@ const Contact = () => {
                   <label htmlFor="message" className="block text-sm font-medium mb-1">Besked</label>
                   <Textarea 
                     id="message" 
-                    placeholder="Skriv din besked her..." 
+                    placeholder={contactData.form.messagePlaceholder}
                     required 
                     className="w-full min-h-[120px]"
                   />
@@ -80,7 +82,7 @@ const Contact = () => {
                   className="w-full bg-musical-orange hover:bg-musical-orange/90 text-white"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Sender...' : 'Send besked'}
+                  {isSubmitting ? contactData.form.submittingButton : contactData.form.submitButton}
                 </Button>
               </form>
             </CardContent>
@@ -98,8 +100,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-700">Telefon</h4>
-                  <p className="text-musical-orange">+45 12 34 56 78</p>
-                  <p className="text-sm text-gray-500">Mandag-Fredag: 9:00-15:00</p>
+                  <p className="text-musical-orange">{contactData.contactInfo.phone.number}</p>
+                  <p className="text-sm text-gray-500">{contactData.contactInfo.phone.hours}</p>
                 </div>
               </div>
               
@@ -112,8 +114,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-700">Email</h4>
-                  <p className="text-musical-orange">musical@bagsvaerd-friskole.dk</p>
-                  <p className="text-sm text-gray-500">Vi svarer normalt inden for 24 timer</p>
+                  <p className="text-musical-orange">{contactData.contactInfo.email.address}</p>
+                  <p className="text-sm text-gray-500">{contactData.contactInfo.email.note}</p>
                 </div>
               </div>
               
@@ -126,9 +128,9 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-700">Adresse</h4>
-                  <p className="text-gray-600">Bagsværd Friskole</p>
-                  <p className="text-gray-600">Skolevej 1</p>
-                  <p className="text-gray-600">2880 Bagsværd</p>
+                  <p className="text-gray-600">{contactData.contactInfo.address.name}</p>
+                  <p className="text-gray-600">{contactData.contactInfo.address.street}</p>
+                  <p className="text-gray-600">{contactData.contactInfo.address.city}</p>
                 </div>
               </div>
             </div>

@@ -1,26 +1,29 @@
 
 import { Button } from "@/components/ui/button";
+import { getHeroData } from "@/utils/dataUtils";
 
 const Hero = () => {
+  const heroData = getHeroData();
+  
   return (
     <div className="relative bg-gradient-to-b from-musical-light to-white py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           <div className="mb-8 animate-float">
             <img 
-              src="/placeholder.svg" 
+              src={heroData.image} 
               alt="Musical illustration" 
               className="h-32 w-32 md:h-40 md:w-40 object-contain"
             />
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            <span className="block font-pacifico text-musical-blue">Årets Musical</span>
-            <span className="block text-musical-orange mt-2">"Drømmenes Land"</span>
+            <span className="block font-pacifico text-musical-blue">{heroData.title}</span>
+            <span className="block text-musical-orange mt-2">{heroData.subtitle}</span>
           </h1>
           
           <p className="text-lg md:text-xl text-gray-700 mb-8">
-            Oplev magien, musikken og de fantastiske præstationer fra Bagsværd Friskoles elever i dette års skolemusical!
+            {heroData.description}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
@@ -28,14 +31,14 @@ const Hero = () => {
               className="bg-musical-blue hover:bg-musical-blue/90 text-white font-medium px-8 py-3 rounded-full transition-transform hover:scale-105"
               size="lg"
             >
-              Køb billetter
+              {heroData.buttons.primary}
             </Button>
             <Button 
               variant="outline"
               className="border-musical-orange text-musical-orange hover:bg-musical-orange/10 font-medium px-8 py-3 rounded-full"
               size="lg"
             >
-              Se tider
+              {heroData.buttons.secondary}
             </Button>
           </div>
         </div>

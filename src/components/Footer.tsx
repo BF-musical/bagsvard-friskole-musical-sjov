@@ -1,5 +1,9 @@
 
+import { getGeneralData, getFooterData } from "@/utils/dataUtils";
+
 const Footer = () => {
+  const generalData = getGeneralData();
+  const footerData = getFooterData();
   const year = new Date().getFullYear();
   
   return (
@@ -7,8 +11,8 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="text-center">
           <div className="mb-6">
-            <span className="font-pacifico text-2xl">Bagsværd Friskole</span>
-            <p className="text-white/80 mt-2">Årets musical: "Drømmenes Land"</p>
+            <span className="font-pacifico text-2xl">{generalData.schoolName}</span>
+            <p className="text-white/80 mt-2">Årets musical: "{generalData.musicalName}"</p>
           </div>
           
           <div className="flex justify-center space-x-6 mb-6">
@@ -33,7 +37,7 @@ const Footer = () => {
           </div>
           
           <div className="text-white/70 text-sm">
-            <p>&copy; {year} Bagsværd Friskole. Alle rettigheder forbeholdes.</p>
+            <p>&copy; {year} {generalData.schoolName}. {footerData.copyright}</p>
           </div>
         </div>
       </div>

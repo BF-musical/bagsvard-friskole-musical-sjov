@@ -1,8 +1,10 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { getGeneralData } from '@/utils/dataUtils';
 
 const Navbar = () => {
+  const generalData = getGeneralData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -10,7 +12,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <a href="#" className="font-pacifico text-musical-blue text-2xl">Bagsværd Friskole</a>
+            <a href="#" className="font-pacifico text-musical-blue text-2xl">{generalData.schoolName}</a>
           </div>
           
           {/* Desktop Navigation */}

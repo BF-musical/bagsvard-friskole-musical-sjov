@@ -1,0 +1,147 @@
+
+{
+  "general": {
+    "schoolName": "Bagsværd Friskole",
+    "musicalName": "Drømmenes Land",
+    "year": "2023"
+  },
+  "hero": {
+    "title": "Årets Musical",
+    "subtitle": "\"Drømmenes Land\"",
+    "description": "Oplev magien, musikken og de fantastiske præstationer fra Bagsværd Friskoles elever i dette års skolemusical!",
+    "buttons": {
+      "primary": "Køb billetter",
+      "secondary": "Se tider"
+    },
+    "image": "/placeholder.svg"
+  },
+  "about": {
+    "title": "Om Musicalen",
+    "subtitle": "Årets forestilling tager dig med på en magisk rejse gennem drømmenes land",
+    "heading": "Drømmenes Land",
+    "paragraphs": [
+      "I \"Drømmenes Land\" følger vi en gruppe børn, der opdager en hemmelig portal til en magisk verden, hvor drømme bliver til virkelighed.",
+      "Men ikke alt er som det ser ud, og børnene må stå sammen for at redde både drømmenes land og deres egen verden fra den onde mareridt-konge.",
+      "Forestillingen er skrevet og udviklet i samarbejde med skolens elever og indeholder originale sange, dans og skuespil."
+    ],
+    "stats": [
+      {
+        "value": "12+",
+        "label": "Originale sange"
+      },
+      {
+        "value": "45",
+        "label": "Medvirkende"
+      }
+    ],
+    "image": "/placeholder.svg"
+  },
+  "gallery": {
+    "title": "Galleri",
+    "subtitle": "Glimt fra prøver og tidligere forestillinger",
+    "images": [
+      { "src": "/placeholder.svg", "alt": "Forestillingsbillede 1" },
+      { "src": "/placeholder.svg", "alt": "Forestillingsbillede 2" },
+      { "src": "/placeholder.svg", "alt": "Forestillingsbillede 3" },
+      { "src": "/placeholder.svg", "alt": "Forestillingsbillede 4" },
+      { "src": "/placeholder.svg", "alt": "Forestillingsbillede 5" },
+      { "src": "/placeholder.svg", "alt": "Forestillingsbillede 6" }
+    ]
+  },
+  "cast": {
+    "title": "Medvirkende",
+    "subtitle": "Mød de talentfulde elever som bringer forestillingen til live",
+    "groups": {
+      "skuespillere": [
+        { "name": "Emma Hansen", "role": "Luna", "grade": "8. klasse" },
+        { "name": "Noah Jensen", "role": "Oliver", "grade": "7. klasse" },
+        { "name": "Sofia Petersen", "role": "Drømmekongen", "grade": "9. klasse" },
+        { "name": "Lucas Nielsen", "role": "Mareridt-kongen", "grade": "8. klasse" },
+        { "name": "Freja Andersen", "role": "Stjernepigen", "grade": "6. klasse" },
+        { "name": "Oscar Christensen", "role": "Skyggevaesnet", "grade": "7. klasse" }
+      ],
+      "dansere": [
+        { "name": "Isabella Møller", "role": "Drømmefeen", "grade": "6. klasse" },
+        { "name": "William Madsen", "role": "Skyggefølger", "grade": "8. klasse" },
+        { "name": "Clara Rasmussen", "role": "Drømmedanser", "grade": "5. klasse" },
+        { "name": "Victor Thomsen", "role": "Stjernedanser", "grade": "7. klasse" }
+      ],
+      "musikere": [
+        { "name": "Anna Mortensen", "role": "Klaver", "grade": "9. klasse" },
+        { "name": "Felix Olsen", "role": "Guitar", "grade": "8. klasse" },
+        { "name": "Laura Jørgensen", "role": "Violin", "grade": "7. klasse" },
+        { "name": "Elias Knudsen", "role": "Trommer", "grade": "9. klasse" }
+      ],
+      "crew": [
+        { "name": "Mathilde Larsen", "role": "Instruktør", "grade": "Lærer" },
+        { "name": "Alexander Sørensen", "role": "Koreograf", "grade": "Lærer" },
+        { "name": "Victoria Eriksen", "role": "Kostumer", "grade": "9. klasse" },
+        { "name": "Benjamin Pedersen", "role": "Lys & Lyd", "grade": "8. klasse" }
+      ]
+    }
+  },
+  "info": {
+    "title": "Information",
+    "subtitle": "Alt hvad du behøver at vide om forestillingen",
+    "performances": [
+      { "date": "Torsdag d. 15. juni 2023", "time": "19:00 - 21:00" },
+      { "date": "Fredag d. 16. juni 2023", "time": "19:00 - 21:00" },
+      { "date": "Lørdag d. 17. juni 2023", "time": "14:00 - 16:00" },
+      { "date": "Lørdag d. 17. juni 2023", "time": "19:00 - 21:00" }
+    ],
+    "tickets": [
+      { "type": "Voksne", "price": "50 kr" },
+      { "type": "Børn (under 12 år)", "price": "25 kr" },
+      { "type": "Familiebillet (2 voksne + 2 børn)", "price": "120 kr" }
+    ],
+    "ticketNote": "Billetterne kan købes online eller i skolens kontor",
+    "address": {
+      "name": "Bagsværd Friskole",
+      "street": "Skolevej 1",
+      "city": "2880 Bagsværd"
+    },
+    "practical": [
+      {
+        "title": "Parkering",
+        "content": "Der er begrænset parkering ved skolen. Vi anbefaler at parkere på de omkringliggende veje eller benytte offentlig transport."
+      },
+      {
+        "title": "Varighed",
+        "content": "Forestillingen varer ca. 2 timer inklusiv pause."
+      },
+      {
+        "title": "Pause",
+        "content": "I pausen sælges der kaffe, te, saft og kage. Alle indtægter går til elevernes lejrskolekasse."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Kontakt",
+    "subtitle": "Har du spørgsmål om forestillingen? Kontakt os!",
+    "form": {
+      "namePlaceholder": "Dit navn",
+      "emailPlaceholder": "din@email.dk",
+      "messagePlaceholder": "Skriv din besked her...",
+      "submitButton": "Send besked",
+      "submittingButton": "Sender..."
+    },
+    "contactInfo": {
+      "phone": {
+        "number": "+45 12 34 56 78",
+        "hours": "Mandag-Fredag: 9:00-15:00"
+      },
+      "email": {
+        "address": "musical@bagsvaerd-friskole.dk",
+        "note": "Vi svarer normalt inden for 24 timer"
+      },
+      "address": {
+        "name": "Bagsværd Friskole",
+        "street": "Skolevej 1",
+        "city": "2880 Bagsværd"
+      }
+    }
+  },
+  "footer": {
+    "copyright": "Alle rettigheder forbeholdes."
+  }
+}

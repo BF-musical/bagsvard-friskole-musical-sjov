@@ -2,21 +2,17 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Ticket } from 'lucide-react';
+import { getInfoData } from '@/utils/dataUtils';
 
 const Info = () => {
-  const performances = [
-    { date: "Torsdag d. 15. juni 2023", time: "19:00 - 21:00" },
-    { date: "Fredag d. 16. juni 2023", time: "19:00 - 21:00" },
-    { date: "Lørdag d. 17. juni 2023", time: "14:00 - 16:00" },
-    { date: "Lørdag d. 17. juni 2023", time: "19:00 - 21:00" },
-  ];
+  const infoData = getInfoData();
 
   return (
     <section id="info" className="py-16 bg-musical-light">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 musical-header">Information</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">Alt hvad du behøver at vide om forestillingen</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 musical-header">{infoData.title}</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">{infoData.subtitle}</p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
@@ -27,7 +23,7 @@ const Info = () => {
             </h3>
             
             <div className="space-y-3">
-              {performances.map((performance, index) => (
+              {infoData.performances.map((performance, index) => (
                 <Card key={index} className="bg-white border-none shadow-sm hover:shadow-md transition-shadow duration-300">
                   <CardContent className="p-4 flex flex-col sm:flex-row justify-between items-center gap-2">
                     <div>
@@ -54,21 +50,19 @@ const Info = () => {
               <Card className="bg-white border-none shadow-sm">
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="font-medium">Voksne</p>
-                      <p className="text-musical-orange font-semibold">50 kr</p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Børn (under 12 år)</p>
-                      <p className="text-musical-orange font-semibold">25 kr</p>
-                    </div>
+                    {infoData.tickets.slice(0, 2).map((ticket, index) => (
+                      <div key={index}>
+                        <p className="font-medium">{ticket.type}</p>
+                        <p className="text-musical-orange font-semibold">{ticket.price}</p>
+                      </div>
+                    ))}
                     <div className="col-span-2">
-                      <p className="font-medium">Familiebillet (2 voksne + 2 børn)</p>
-                      <p className="text-musical-orange font-semibold">120 kr</p>
+                      <p className="font-medium">{infoData.tickets[2].type}</p>
+                      <p className="text-musical-orange font-semibold">{infoData.tickets[2].price}</p>
                     </div>
                   </div>
                   <div className="mt-4 text-sm text-gray-500">
-                    <p>Billetterne kan købes online eller i skolens kontor</p>
+                    <p>{infoData.ticketNote}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -82,25 +76,17 @@ const Info = () => {
               <CardContent className="p-4">
                 <h4 className="font-medium mb-2">Adresse</h4>
                 <p className="text-gray-700 mb-4">
-                  Bagsværd Friskole<br />
-                  Skolevej 1<br />
-                  2880 Bagsværd
+                  {infoData.address.name}<br />
+                  {infoData.address.street}<br />
+                  {infoData.address.city}
                 </p>
                 
-                <h4 className="font-medium mb-2">Parkering</h4>
-                <p className="text-gray-700 mb-4">
-                  Der er begrænset parkering ved skolen. Vi anbefaler at parkere på de omkringliggende veje eller benytte offentlig transport.
-                </p>
-                
-                <h4 className="font-medium mb-2">Varighed</h4>
-                <p className="text-gray-700 mb-4">
-                  Forestillingen varer ca. 2 timer inklusiv pause.
-                </p>
-                
-                <h4 className="font-medium mb-2">Pause</h4>
-                <p className="text-gray-700">
-                  I pausen sælges der kaffe, te, saft og kage. Alle indtægter går til elevernes lejrskolekasse.
-                </p>
+                {infoData.practical.map((item, index) => (
+                  <div key={index}>
+                    <h4 className="font-medium mb-2">{item.title}</h4>
+                    <p className="text-gray-700 mb-4">{item.content}</p>
+                  </div>
+                ))}
               </CardContent>
             </Card>
             
