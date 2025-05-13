@@ -9,7 +9,15 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import Location from "./pages/Location";
 
-const queryClient = new QueryClient();
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

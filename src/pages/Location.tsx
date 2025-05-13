@@ -1,20 +1,43 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { getSiteData } from '@/utils/dataUtils';
+import { getInfoData } from '@/utils/dataUtils';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useToast } from '@/hooks/use-toast';
 
 const Location = () => {
+  const { toast } = useToast();
   const [locationData, setLocationData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const data = getSiteData();
-    setLocationData(data.info.address);
-  }, []);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getInfoData();
+        setLocationData(data.address);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching location data:', error);
+        toast({
+          title: "Fejl ved indlæsning",
+          description: "Kunne ikke indlæse lokationsdata",
+          variant: "destructive"
+        });
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [toast]);
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Indlæser...</div>;
+  }
 
   if (!locationData) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Ingen lokationsdata fundet</div>;
   }
 
   return (

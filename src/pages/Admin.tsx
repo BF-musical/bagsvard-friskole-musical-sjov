@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { getSiteData } from '@/utils/dataUtils';
+import { getSiteData, updateSiteData } from '@/utils/dataUtils';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Info } from 'lucide-react';
+import { Info, Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import type { SiteData } from '@/lib/supabase';
 
 const Admin = () => {
   const { toast } = useToast();
@@ -15,17 +17,79 @@ const Admin = () => {
   const [password, setPassword] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-    const siteData = getSiteData();
-    setData(JSON.stringify(siteData, null, 2));
+    // Check if user is already authenticated with Supabase
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        setIsAuthenticated(true);
+        fetchData();
+      } else {
+        setIsLoading(false);
+      }
+    });
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        setIsAuthenticated(true);
+        fetchData();
+      } else {
+        setIsAuthenticated(false);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const siteData = await getSiteData();
+      setData(JSON.stringify(siteData, null, 2));
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+      toast({
+        title: "Fejl ved indlæsning",
+        description: "Kunne ikke indlæse hjemmesidedata",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple password check - in a real app, use proper authentication
+    // Simple password check for demo purposes
+    // In production, you should use Supabase Authentication
     if (password === 'admin123') {
-      setIsAuthenticated(true);
+      try {
+        // Sign in with email (for demonstration purposes)
+        // In production, replace with proper authentication
+        const { error } = await supabase.auth.signInWithPassword({
+          email: 'admin@example.com',
+          password: password,
+        });
+        
+        if (error) throw error;
+        
+        setIsAuthenticated(true);
+        toast({
+          title: "Logget ind",
+          description: "Du er nu logget ind som administrator",
+        });
+      } catch (error: any) {
+        console.error('Error logging in:', error);
+        toast({
+          title: "Forkert kodeord",
+          description: "Prøv igen.",
+          variant: "destructive"
+        });
+      }
     } else {
       toast({
         title: "Forkert kodeord",
@@ -35,54 +99,89 @@ const Admin = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setIsAuthenticated(false);
+      toast({
+        title: "Logget ud",
+        description: "Du er nu logget ud",
+      });
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  const handleSave = async () => {
     try {
       // Validate JSON
-      JSON.parse(data);
+      const parsedData = JSON.parse(data) as SiteData;
       
       setIsSaving(true);
-      // In a real app, this would send the data to a server
-      setTimeout(() => {
-        setIsSaving(false);
+      // Save to Supabase
+      const success = await updateSiteData(parsedData);
+      
+      if (success) {
         toast({
           title: "Ændringer gemt!",
-          description: "Siden skal genindlæses for at se ændringerne.",
+          description: "Hjemmesiden er opdateret med dine ændringer.",
         });
-      }, 1000);
+      } else {
+        throw new Error("Failed to update data");
+      }
+      
+      setIsSaving(false);
     } catch (error) {
+      console.error('Error saving data:', error);
+      setIsSaving(false);
       toast({
-        title: "Ugyldig JSON",
-        description: "Kontroller formateringen og prøv igen.",
+        title: "Fejl ved gemning",
+        description: "Kontroller JSON-formateringen og prøv igen.",
         variant: "destructive"
       });
     }
   };
 
   const getFormattedExample = (section: string) => {
-    const siteData = JSON.parse(data);
-    switch(section) {
-      case 'general':
-        return `{
+    try {
+      const siteData = JSON.parse(data);
+      switch(section) {
+        case 'general':
+          return `{
   "schoolName": "Bagsværd Friskole", // Skolens navn
   "musicalName": "Drømmenes Land",   // Musicalens navn
   "year": "2023"                     // Årstal
 }`;
-      case 'location':
-        return `{
+        case 'location':
+          return `{
   "name": "Bagsværd Friskole",    // Stedets navn
   "street": "Skolevej 1",         // Gadenavn og nummer
   "city": "2880 Bagsværd"         // Postnummer og by
 }`;
-      case 'cast':
-        return `{
+        case 'cast':
+          return `{
   "name": "Emma Hansen",    // Personens navn
   "role": "Luna",           // Rolle i forestillingen
   "grade": "8. klasse"      // Klassetrin
 }`;
-      default:
-        return '';
+        default:
+          return '';
+      }
+    } catch (error) {
+      return '';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-musical-blue" />
+          <p className="mt-4">Indlæser...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (
@@ -115,7 +214,7 @@ const Admin = () => {
       <div className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Musical Hjemmeside Admin</h1>
-          <Button onClick={() => setIsAuthenticated(false)}>Log ud</Button>
+          <Button onClick={handleLogout}>Log ud</Button>
         </div>
         
         <Tabs defaultValue="editor" className="mb-6">
@@ -131,6 +230,7 @@ const Admin = () => {
                   <h2 className="text-xl font-semibold mb-2">Rediger Indhold</h2>
                   <p className="text-gray-600 text-sm mb-4">
                     Rediger JSON data direkte. Ændre tekst, billede URLs, og andre oplysninger.
+                    Alle ændringer gemmes i Supabase databasen.
                   </p>
                   <Textarea
                     value={data}
@@ -159,7 +259,7 @@ const Admin = () => {
                   <div>
                     <h3 className="font-semibold text-lg mb-2">Kom i gang</h3>
                     <p className="mb-2">
-                      Alle tekster, billeder og andre oplysninger er gemt i et JSON-format. 
+                      Alle tekster, billeder og andre oplysninger er gemt i et JSON-format i Supabase databasen. 
                       Du kan redigere det hele ved at ændre værdierne i JSON-editoren.
                     </p>
                     <Alert className="bg-musical-light border-musical-blue">
@@ -167,7 +267,7 @@ const Admin = () => {
                       <AlertTitle>Vigtig information</AlertTitle>
                       <AlertDescription>
                         Husk at gemme dine ændringer ved at klikke på "Gem Ændringer" knappen. 
-                        Genindlæs siden efter gemning for at se ændringerne.
+                        Ændringerne gemmes øjeblikkeligt i databasen og vises på hjemmesiden.
                       </AlertDescription>
                     </Alert>
                   </div>
@@ -187,7 +287,7 @@ const Admin = () => {
                       For eksempel: <code>"image": "/dit-billede.jpg"</code>
                     </p>
                     <p className="text-sm text-gray-600">
-                      Upload dine billeder til en billed-hostingtjeneste og brug URL'en, eller placer dem i "public" mappen og angiv relativ sti.
+                      Upload dine billeder til Supabase Storage eller en anden billed-hostingtjeneste og brug URL'en.
                     </p>
                   </div>
                   
@@ -217,8 +317,7 @@ const Admin = () => {
         
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>
-            Bemærk: I denne demo-version gemmes ændringer ikke permanent. I en rigtig implementering 
-            ville ændringerne blive gemt i en database eller fil.
+            Ændringer gemmes i Supabase databasen og reflekteres øjeblikkeligt på hjemmesiden.
           </p>
         </div>
       </div>
