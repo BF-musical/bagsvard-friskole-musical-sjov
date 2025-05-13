@@ -14,10 +14,32 @@ const Cast = () => {
   });
   const [activeTab, setActiveTab] = useState('skuespillere');
   const [showMore, setShowMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    setCastData(getCastData());
+    const fetchData = async () => {
+      try {
+        const data = await getCastData();
+        setCastData(data);
+      } catch (error) {
+        console.error("Failed to fetch cast data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
+  
+  if (isLoading) {
+    return (
+      <section id="cast" className="py-16 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          Loading cast section...
+        </div>
+      </section>
+    );
+  }
   
   if (!castData.groups) return null;
   

@@ -37,10 +37,22 @@ const Contact = () => {
   });
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const formRef = useRef<HTMLFormElement>(null);
   
   useEffect(() => {
-    setContactData(getContactData());
+    const fetchData = async () => {
+      try {
+        const data = await getContactData();
+        setContactData(data);
+      } catch (error) {
+        console.error("Failed to fetch contact data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -61,6 +73,16 @@ const Contact = () => {
       }
     }, 1500);
   };
+  
+  if (isLoading) {
+    return (
+      <section id="contact" className="py-16 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          Loading contact section...
+        </div>
+      </section>
+    );
+  }
   
   return (
     <section id="contact" className="py-16 bg-white">

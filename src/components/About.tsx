@@ -14,9 +14,32 @@ const About = () => {
     image: ""
   });
   
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
   useEffect(() => {
-    setAboutData(getAboutData());
+    const fetchData = async () => {
+      try {
+        const data = await getAboutData();
+        setAboutData(data);
+      } catch (error) {
+        console.error("Failed to fetch about data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
+  
+  if (isLoading) {
+    return (
+      <section id="about" className="py-16 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          Loading about section...
+        </div>
+      </section>
+    );
+  }
   
   return (
     <section id="about" className="py-16 bg-white">

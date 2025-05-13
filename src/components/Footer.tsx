@@ -12,13 +12,36 @@ const Footer = () => {
   const [footerData, setFooterData] = useState<SiteData['footer']>({
     copyright: ""
   });
+  const [isLoading, setIsLoading] = useState(true);
   
   const year = new Date().getFullYear();
   
   useEffect(() => {
-    setGeneralData(getGeneralData());
-    setFooterData(getFooterData());
+    const fetchData = async () => {
+      try {
+        const generalDataResult = await getGeneralData();
+        const footerDataResult = await getFooterData();
+        setGeneralData(generalDataResult);
+        setFooterData(footerDataResult);
+      } catch (error) {
+        console.error("Failed to fetch footer data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
+  
+  if (isLoading) {
+    return (
+      <footer className="bg-musical-blue text-white py-10">
+        <div className="container mx-auto px-4 text-center">
+          Loading footer...
+        </div>
+      </footer>
+    );
+  }
   
   return (
     <footer className="bg-musical-blue text-white py-10">

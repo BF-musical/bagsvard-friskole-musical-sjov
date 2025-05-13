@@ -20,10 +20,32 @@ const Info = () => {
     },
     practical: []
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setInfoData(getInfoData());
+    const fetchData = async () => {
+      try {
+        const data = await getInfoData();
+        setInfoData(data);
+      } catch (error) {
+        console.error("Failed to fetch info data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
+
+  if (isLoading) {
+    return (
+      <section id="info" className="py-16 bg-musical-light">
+        <div className="container mx-auto px-4 text-center">
+          Loading info section...
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="info" className="py-16 bg-musical-light">

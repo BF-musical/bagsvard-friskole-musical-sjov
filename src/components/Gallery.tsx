@@ -15,9 +15,21 @@ const Gallery = () => {
   });
   const [open, setOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setGalleryData(getGalleryData());
+    const fetchData = async () => {
+      try {
+        const data = await getGalleryData();
+        setGalleryData(data);
+      } catch (error) {
+        console.error("Failed to fetch gallery data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
 
   const openLightbox = (index: number) => {
@@ -32,6 +44,16 @@ const Gallery = () => {
   const prevImage = () => {
     setSelectedImageIndex((prev) => (prev - 1 + galleryData.images.length) % galleryData.images.length);
   };
+
+  if (isLoading) {
+    return (
+      <section id="gallery" className="py-16 bg-musical-light">
+        <div className="container mx-auto px-4 text-center">
+          Loading gallery section...
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="gallery" className="py-16 bg-musical-light">

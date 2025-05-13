@@ -1,14 +1,14 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { getSiteData, updateSiteData } from '@/utils/dataUtils';
+import { initializeSupabaseData } from '@/utils/initSupabase';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type { SiteData } from '@/lib/supabase';
 
 const Admin = () => {
@@ -18,6 +18,7 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isInitializing, setIsInitializing] = useState<boolean>(false);
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
@@ -59,6 +60,32 @@ const Admin = () => {
         variant: "destructive"
       });
       setIsLoading(false);
+    }
+  };
+
+  const handleInitializeData = async () => {
+    setIsInitializing(true);
+    try {
+      const result = await initializeSupabaseData();
+      
+      toast({
+        title: result.success ? "Success" : "Error",
+        description: result.message,
+        variant: result.success ? "default" : "destructive"
+      });
+      
+      if (result.success) {
+        fetchData();
+      }
+    } catch (error) {
+      console.error('Failed to initialize data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize data",
+        variant: "destructive"
+      });
+    } finally {
+      setIsInitializing(false);
     }
   };
 
@@ -209,12 +236,21 @@ const Admin = () => {
     );
   }
 
-  return (
+  const renderAdminPanel = () => (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Musical Hjemmeside Admin</h1>
-          <Button onClick={handleLogout}>Log ud</Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleInitializeData}
+              disabled={isInitializing}
+              variant="outline"
+            >
+              {isInitializing ? 'Initializing...' : 'Initialize Database'}
+            </Button>
+            <Button onClick={handleLogout}>Log ud</Button>
+          </div>
         </div>
         
         <Tabs defaultValue="editor" className="mb-6">
@@ -323,6 +359,8 @@ const Admin = () => {
       </div>
     </div>
   );
+
+  return renderAdminPanel();
 };
 
 export default Admin;

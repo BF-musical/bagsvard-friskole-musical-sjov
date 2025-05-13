@@ -15,10 +15,32 @@ const Hero = () => {
     },
     image: ""
   });
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    setHeroData(getHeroData());
+    const fetchData = async () => {
+      try {
+        const data = await getHeroData();
+        setHeroData(data);
+      } catch (error) {
+        console.error("Failed to fetch hero data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
+  
+  if (isLoading) {
+    return (
+      <div className="relative bg-gradient-to-b from-musical-light to-white py-16 md:py-24">
+        <div className="container mx-auto px-4 text-center">
+          Loading hero section...
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="relative bg-gradient-to-b from-musical-light to-white py-16 md:py-24">
