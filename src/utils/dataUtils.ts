@@ -33,16 +33,46 @@ export const getSiteData = async (): Promise<SiteData> => {
 // Function to update site data in Supabase
 export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    // Check if data exists first
+    const { data: existingData, error: checkError } = await supabase
       .from('site_content')
-      .upsert({ 
-        content: newData,
-        created_at: new Date().toISOString()
-      });
-    
-    if (error) {
-      console.error('Error updating data in Supabase:', error);
+      .select('id')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+      
+    if (checkError && checkError.code !== 'PGRST116') {  // PGRST116 is "no rows returned" error
+      console.error('Error checking existing data:', checkError);
       return false;
+    }
+    
+    if (existingData?.id) {
+      // Update existing record
+      const { error } = await supabase
+        .from('site_content')
+        .update({ 
+          content: newData,
+          created_at: new Date().toISOString()
+        })
+        .eq('id', existingData.id);
+        
+      if (error) {
+        console.error('Error updating data in Supabase:', error);
+        return false;
+      }
+    } else {
+      // Insert new record
+      const { error } = await supabase
+        .from('site_content')
+        .insert({ 
+          content: newData,
+          created_at: new Date().toISOString()
+        });
+        
+      if (error) {
+        console.error('Error inserting data in Supabase:', error);
+        return false;
+      }
     }
     
     return true;

@@ -1,18 +1,41 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { getGeneralData } from '@/utils/dataUtils';
+import type { SiteData } from '@/lib/supabase';
 
 const Navbar = () => {
-  const generalData = getGeneralData();
+  const [generalData, setGeneralData] = useState<SiteData['general']>({
+    schoolName: "",
+    musicalName: "",
+    year: ""
+  });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getGeneralData();
+        setGeneralData(data);
+      } catch (error) {
+        console.error("Failed to fetch general data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
 
   return (
     <nav className="bg-white/90 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <a href="#" className="font-pacifico text-musical-blue text-2xl">{generalData.schoolName}</a>
+            <a href="#" className="font-pacifico text-musical-blue text-2xl">
+              {isLoading ? 'Loading...' : generalData.schoolName}
+            </a>
           </div>
           
           {/* Desktop Navigation */}
