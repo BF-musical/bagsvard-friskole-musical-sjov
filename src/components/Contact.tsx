@@ -1,17 +1,47 @@
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { getContactData } from '@/utils/dataUtils';
+import type { SiteData } from '@/lib/supabase';
 
 const Contact = () => {
-  const contactData = getContactData();
+  const [contactData, setContactData] = useState<SiteData['contact']>({
+    title: "",
+    subtitle: "",
+    form: {
+      namePlaceholder: "",
+      emailPlaceholder: "",
+      messagePlaceholder: "",
+      submitButton: "",
+      submittingButton: ""
+    },
+    contactInfo: {
+      phone: {
+        number: "",
+        hours: ""
+      },
+      email: {
+        address: "",
+        note: ""
+      },
+      address: {
+        name: "",
+        street: "",
+        city: ""
+      }
+    }
+  });
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  
+  useEffect(() => {
+    setContactData(getContactData());
+  }, []);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

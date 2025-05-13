@@ -1,11 +1,29 @@
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Ticket } from 'lucide-react';
 import { getInfoData } from '@/utils/dataUtils';
+import type { SiteData } from '@/lib/supabase';
 
 const Info = () => {
-  const infoData = getInfoData();
+  const [infoData, setInfoData] = useState<SiteData['info']>({
+    title: "",
+    subtitle: "",
+    performances: [],
+    tickets: [],
+    ticketNote: "",
+    address: {
+      name: "",
+      street: "",
+      city: ""
+    },
+    practical: []
+  });
+
+  useEffect(() => {
+    setInfoData(getInfoData());
+  }, []);
 
   return (
     <section id="info" className="py-16 bg-musical-light">
@@ -56,10 +74,12 @@ const Info = () => {
                         <p className="text-musical-orange font-semibold">{ticket.price}</p>
                       </div>
                     ))}
-                    <div className="col-span-2">
-                      <p className="font-medium">{infoData.tickets[2].type}</p>
-                      <p className="text-musical-orange font-semibold">{infoData.tickets[2].price}</p>
-                    </div>
+                    {infoData.tickets.length > 2 && (
+                      <div className="col-span-2">
+                        <p className="font-medium">{infoData.tickets[2].type}</p>
+                        <p className="text-musical-orange font-semibold">{infoData.tickets[2].price}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="mt-4 text-sm text-gray-500">
                     <p>{infoData.ticketNote}</p>

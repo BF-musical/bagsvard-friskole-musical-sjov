@@ -1,9 +1,22 @@
 
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAboutData } from "@/utils/dataUtils";
+import type { SiteData } from '@/lib/supabase';
 
 const About = () => {
-  const aboutData = getAboutData();
+  const [aboutData, setAboutData] = useState<SiteData['about']>({
+    title: "",
+    subtitle: "",
+    heading: "",
+    paragraphs: [],
+    stats: [],
+    image: ""
+  });
+  
+  useEffect(() => {
+    setAboutData(getAboutData());
+  }, []);
   
   return (
     <section id="about" className="py-16 bg-white">

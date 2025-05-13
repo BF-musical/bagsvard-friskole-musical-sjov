@@ -1,9 +1,24 @@
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { getHeroData } from "@/utils/dataUtils";
+import type { SiteData } from '@/lib/supabase';
 
 const Hero = () => {
-  const heroData = getHeroData();
+  const [heroData, setHeroData] = useState<SiteData['hero']>({
+    title: "",
+    subtitle: "",
+    description: "",
+    buttons: {
+      primary: "",
+      secondary: ""
+    },
+    image: ""
+  });
+  
+  useEffect(() => {
+    setHeroData(getHeroData());
+  }, []);
   
   return (
     <div className="relative bg-gradient-to-b from-musical-light to-white py-16 md:py-24">

@@ -1,10 +1,24 @@
 
+import { useState, useEffect } from "react";
 import { getGeneralData, getFooterData } from "@/utils/dataUtils";
+import type { SiteData } from '@/lib/supabase';
 
 const Footer = () => {
-  const generalData = getGeneralData();
-  const footerData = getFooterData();
+  const [generalData, setGeneralData] = useState<SiteData['general']>({
+    schoolName: "",
+    musicalName: "",
+    year: ""
+  });
+  const [footerData, setFooterData] = useState<SiteData['footer']>({
+    copyright: ""
+  });
+  
   const year = new Date().getFullYear();
+  
+  useEffect(() => {
+    setGeneralData(getGeneralData());
+    setFooterData(getFooterData());
+  }, []);
   
   return (
     <footer className="bg-musical-blue text-white py-10">

@@ -1,19 +1,31 @@
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useState } from 'react';
 import { getCastData } from '@/utils/dataUtils';
+import type { SiteData } from '@/lib/supabase';
 
 const Cast = () => {
-  const castData = getCastData();
+  const [castData, setCastData] = useState<SiteData['cast']>({
+    title: "",
+    subtitle: "",
+    groups: {}
+  });
   const [activeTab, setActiveTab] = useState('skuespillere');
   const [showMore, setShowMore] = useState(false);
+  
+  useEffect(() => {
+    setCastData(getCastData());
+  }, []);
+  
+  if (!castData.groups) return null;
+  
   const castGroups = castData.groups;
   
   const visibleCastMembers = showMore 
-    ? castGroups[activeTab as keyof typeof castGroups] 
-    : castGroups[activeTab as keyof typeof castGroups].slice(0, 4);
+    ? castGroups[activeTab as keyof typeof castGroups] || [] 
+    : (castGroups[activeTab as keyof typeof castGroups] || []).slice(0, 4);
 
   return (
     <section id="cast" className="py-16 bg-white">
@@ -54,7 +66,7 @@ const Cast = () => {
                   ))}
                 </div>
                 
-                {castGroups[group as keyof typeof castGroups].length > 4 && (
+                {castGroups[group as keyof typeof castGroups]?.length > 4 && (
                   <div className="text-center mt-6">
                     <Button 
                       variant="ghost" 

@@ -1,6 +1,7 @@
 
-import { supabase, type SiteData } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import siteData from '../data/siteData.json';
+import { SiteData } from '@/lib/supabase';
 
 // Function to get all site data from Supabase
 export const getSiteData = async (): Promise<SiteData> => {
@@ -17,7 +18,12 @@ export const getSiteData = async (): Promise<SiteData> => {
       return siteData as SiteData; // Fallback to local data
     }
     
-    return data as SiteData;
+    if (!data || !data.content) {
+      console.warn('No data found in Supabase, using local data');
+      return siteData as SiteData;
+    }
+    
+    return data.content as SiteData;
   } catch (error) {
     console.error('Failed to fetch site data:', error);
     return siteData as SiteData; // Fallback to local data
@@ -47,42 +53,34 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
 };
 
 // Helper functions to get specific sections of data
-export const getHeroData = async () => {
-  const data = await getSiteData();
-  return data.hero;
+export const getHeroData = () => {
+  return siteData.hero;
 };
 
-export const getAboutData = async () => {
-  const data = await getSiteData();
-  return data.about;
+export const getAboutData = () => {
+  return siteData.about;
 };
 
-export const getGalleryData = async () => {
-  const data = await getSiteData();
-  return data.gallery;
+export const getGalleryData = () => {
+  return siteData.gallery;
 };
 
-export const getCastData = async () => {
-  const data = await getSiteData();
-  return data.cast;
+export const getCastData = () => {
+  return siteData.cast;
 };
 
-export const getInfoData = async () => {
-  const data = await getSiteData();
-  return data.info;
+export const getInfoData = () => {
+  return siteData.info;
 };
 
-export const getContactData = async () => {
-  const data = await getSiteData();
-  return data.contact;
+export const getContactData = () => {
+  return siteData.contact;
 };
 
-export const getGeneralData = async () => {
-  const data = await getSiteData();
-  return data.general;
+export const getGeneralData = () => {
+  return siteData.general;
 };
 
-export const getFooterData = async () => {
-  const data = await getSiteData();
-  return data.footer;
+export const getFooterData = () => {
+  return siteData.footer;
 };

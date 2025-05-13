@@ -1,15 +1,24 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { getGalleryData } from '@/utils/dataUtils';
+import type { SiteData } from '@/lib/supabase';
 
 const Gallery = () => {
-  const galleryData = getGalleryData();
+  const [galleryData, setGalleryData] = useState<SiteData['gallery']>({
+    title: "",
+    subtitle: "",
+    images: []
+  });
   const [open, setOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  useEffect(() => {
+    setGalleryData(getGalleryData());
+  }, []);
 
   const openLightbox = (index: number) => {
     setSelectedImageIndex(index);
@@ -70,11 +79,13 @@ const Gallery = () => {
                 <ChevronLeft className="w-6 h-6" />
               </Button>
               
-              <img 
-                src={galleryData.images[selectedImageIndex].src} 
-                alt={galleryData.images[selectedImageIndex].alt}
-                className="w-full h-auto max-h-[80vh] object-contain"
-              />
+              {galleryData.images.length > 0 && (
+                <img 
+                  src={galleryData.images[selectedImageIndex].src} 
+                  alt={galleryData.images[selectedImageIndex].alt}
+                  className="w-full h-auto max-h-[80vh] object-contain"
+                />
+              )}
               
               <Button 
                 variant="ghost" 
