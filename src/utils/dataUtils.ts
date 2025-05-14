@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import siteData from '../data/siteData.json';
 import type { SiteData } from '@/lib/supabase';
@@ -6,26 +5,30 @@ import type { SiteData } from '@/lib/supabase';
 // Function to get all site data from Supabase
 export const getSiteData = async (): Promise<SiteData> => {
   try {
+    console.log('Fetching site data from Supabase...');
+    
     const { data, error } = await supabase
       .from('site_content')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .limit(1);
     
     if (error) {
       console.error('Error fetching data from Supabase:', error);
+      console.log('Falling back to local data');
       return siteData as SiteData; // Fallback to local data
     }
     
-    if (!data || !data.content) {
+    if (!data || data.length === 0) {
       console.warn('No data found in Supabase, using local data');
       return siteData as SiteData;
     }
     
-    return data.content as SiteData;
+    console.log('Successfully fetched data from Supabase');
+    return data[0].content as SiteData;
   } catch (error) {
     console.error('Failed to fetch site data:', error);
+    console.log('Falling back to local data due to error');
     return siteData as SiteData; // Fallback to local data
   }
 };
@@ -33,20 +36,21 @@ export const getSiteData = async (): Promise<SiteData> => {
 // Function to update site data in Supabase
 export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
   try {
+    console.log('Updating site data in Supabase...');
+    
     // Check if data exists first
     const { data: existingData, error: checkError } = await supabase
       .from('site_content')
       .select('id')
       .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .limit(1);
       
-    if (checkError && checkError.code !== 'PGRST116') {  // PGRST116 is "no rows returned" error
+    if (checkError) {
       console.error('Error checking existing data:', checkError);
       return false;
     }
     
-    if (existingData?.id) {
+    if (existingData && existingData.length > 0) {
       // Update existing record
       const { error } = await supabase
         .from('site_content')
@@ -54,12 +58,14 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
           content: newData,
           created_at: new Date().toISOString()
         })
-        .eq('id', existingData.id);
+        .eq('id', existingData[0].id);
         
       if (error) {
         console.error('Error updating data in Supabase:', error);
         return false;
       }
+      
+      console.log('Data updated successfully');
     } else {
       // Insert new record
       const { error } = await supabase
@@ -73,6 +79,8 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
         console.error('Error inserting data in Supabase:', error);
         return false;
       }
+      
+      console.log('Data inserted successfully');
     }
     
     return true;

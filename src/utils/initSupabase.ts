@@ -8,6 +8,8 @@ import siteData from '../data/siteData.json';
  */
 export const initializeSupabaseData = async () => {
   try {
+    console.log('Starting database initialization...');
+    
     // Check if data already exists
     const { data, error } = await supabase
       .from('site_content')
@@ -16,11 +18,13 @@ export const initializeSupabaseData = async () => {
     
     if (error) {
       console.error('Error checking for existing data:', error);
-      return { success: false, message: 'Failed to check for existing data' };
+      return { success: false, message: 'Failed to check for existing data: ' + error.message };
     }
     
     // If no data exists, insert the default data
     if (!data || data.length === 0) {
+      console.log('No existing data found, inserting default data...');
+      
       const { error: insertError } = await supabase
         .from('site_content')
         .insert({
@@ -30,15 +34,17 @@ export const initializeSupabaseData = async () => {
       
       if (insertError) {
         console.error('Error inserting initial data:', insertError);
-        return { success: false, message: 'Failed to insert initial data' };
+        return { success: false, message: 'Failed to insert initial data: ' + insertError.message };
       }
       
+      console.log('Initial data inserted successfully');
       return { success: true, message: 'Initial data inserted successfully' };
     }
     
+    console.log('Data already exists, no initialization needed');
     return { success: true, message: 'Data already exists, no initialization needed' };
   } catch (error) {
     console.error('Failed to initialize data:', error);
-    return { success: false, message: 'An unexpected error occurred' };
+    return { success: false, message: 'An unexpected error occurred: ' + (error instanceof Error ? error.message : String(error)) };
   }
 };

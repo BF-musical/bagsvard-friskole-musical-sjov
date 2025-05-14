@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,6 +20,7 @@ const Admin = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isInitializing, setIsInitializing] = useState<boolean>(false);
   const [session, setSession] = useState<any>(null);
+  const [initMessage, setInitMessage] = useState<string>('');
 
   useEffect(() => {
     // Check if user is already authenticated with Supabase
@@ -50,7 +50,9 @@ const Admin = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
+      console.log('Fetching data for Admin page...');
       const siteData = await getSiteData();
+      console.log('Received data:', siteData);
       setData(JSON.stringify(siteData, null, 2));
       setIsLoading(false);
     } catch (error) {
@@ -60,15 +62,21 @@ const Admin = () => {
         description: "Kunne ikke indlæse hjemmesidedata",
         variant: "destructive"
       });
+      // Still set some default data to display
+      const defaultData = { general: { schoolName: "Default School", musicalName: "Default Musical", year: "2023" } };
+      setData(JSON.stringify(defaultData, null, 2));
       setIsLoading(false);
     }
   };
 
   const handleInitializeData = async () => {
     setIsInitializing(true);
+    setInitMessage('');
     try {
+      console.log('Initializing database...');
       const result = await initializeSupabaseData();
       
+      setInitMessage(result.message);
       toast({
         title: result.success ? "Success" : "Error",
         description: result.message,
@@ -76,13 +84,15 @@ const Admin = () => {
       });
       
       if (result.success) {
-        fetchData();
+        await fetchData();
       }
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       console.error('Failed to initialize data:', error);
+      setInitMessage(`Error: ${errorMsg}`);
       toast({
         title: "Error",
-        description: "Failed to initialize data",
+        description: `Failed to initialize data: ${errorMsg}`,
         variant: "destructive"
       });
     } finally {
@@ -93,13 +103,14 @@ const Admin = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple password check - changed from admin123 to musical2024 for security
+    // Password is now "musical2024" 
     if (password === 'musical2024') {
       setIsAuthenticated(true);
       toast({
         title: "Logget ind",
         description: "Du er nu logget ind som administrator",
       });
+      fetchData(); // Fetch data immediately after login
     } else {
       toast({
         title: "Forkert kodeord",
@@ -235,6 +246,14 @@ const Admin = () => {
             <Button onClick={handleLogout}>Log ud</Button>
           </div>
         </div>
+        
+        {initMessage && (
+          <Alert className={`mb-4 ${initMessage.includes('Error') ? 'bg-red-50 border-red-500' : 'bg-green-50 border-green-500'}`}>
+            <Info className="h-4 w-4" />
+            <AlertTitle>{initMessage.includes('Error') ? 'Fejl' : 'Success'}</AlertTitle>
+            <AlertDescription>{initMessage}</AlertDescription>
+          </Alert>
+        )}
         
         <Tabs defaultValue="editor" className="mb-6">
           <TabsList className="w-full max-w-md mx-auto grid grid-cols-2 mb-4">
