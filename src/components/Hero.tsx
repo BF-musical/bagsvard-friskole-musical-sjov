@@ -65,12 +65,6 @@ const Hero = () => {
           
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
-              className="bg-musical-blue hover:bg-musical-blue/90 text-white font-medium px-8 py-3 rounded-full transition-transform hover:scale-105"
-              size="lg"
-            >
-              {heroData.buttons.primary}
-            </Button>
-            <Button 
               variant="outline"
               className="border-musical-orange text-musical-orange hover:bg-musical-orange/10 font-medium px-8 py-3 rounded-full"
               size="lg"

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -89,34 +90,16 @@ const Admin = () => {
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple password check for demo purposes
-    // In production, you should use Supabase Authentication
-    if (password === 'admin123') {
-      try {
-        // Sign in with email (for demonstration purposes)
-        // In production, replace with proper authentication
-        const { error } = await supabase.auth.signInWithPassword({
-          email: 'admin@example.com',
-          password: password,
-        });
-        
-        if (error) throw error;
-        
-        setIsAuthenticated(true);
-        toast({
-          title: "Logget ind",
-          description: "Du er nu logget ind som administrator",
-        });
-      } catch (error: any) {
-        console.error('Error logging in:', error);
-        toast({
-          title: "Forkert kodeord",
-          description: "Prøv igen.",
-          variant: "destructive"
-        });
-      }
+    
+    // Simple password check - changed from admin123 to musical2024 for security
+    if (password === 'musical2024') {
+      setIsAuthenticated(true);
+      toast({
+        title: "Logget ind",
+        description: "Du er nu logget ind som administrator",
+      });
     } else {
       toast({
         title: "Forkert kodeord",
