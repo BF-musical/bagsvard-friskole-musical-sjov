@@ -8,7 +8,7 @@ import { initializeSupabaseData } from '@/utils/initSupabase';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Info, Loader2 } from 'lucide-react';
+import { Info, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import type { SiteData } from '@/lib/supabase';
 
@@ -22,6 +22,7 @@ const Admin = () => {
   const [isInitializing, setIsInitializing] = useState<boolean>(false);
   const [session, setSession] = useState<any>(null);
   const [initMessage, setInitMessage] = useState<string>('');
+  const [saveStatus, setSaveStatus] = useState<{success: boolean, message: string} | null>(null);
 
   useEffect(() => {
     // Check if user is already authenticated with Supabase
@@ -65,7 +66,6 @@ const Admin = () => {
         });
         setData(JSON.stringify({}, null, 2));
       }
-      setIsLoading(false);
     } catch (error) {
       console.error('Failed to fetch data:', error);
       toast({
@@ -76,6 +76,7 @@ const Admin = () => {
       // Still set some default data to display
       const defaultData = { general: { schoolName: "Default School", musicalName: "Default Musical", year: "2023" } };
       setData(JSON.stringify(defaultData, null, 2));
+    } finally {
       setIsLoading(false);
     }
   };
@@ -83,6 +84,7 @@ const Admin = () => {
   const handleInitializeData = async () => {
     setIsInitializing(true);
     setInitMessage('');
+    setSaveStatus(null);
     try {
       console.log('Initializing database...');
       const result = await initializeSupabaseData();
@@ -135,6 +137,7 @@ const Admin = () => {
     try {
       await supabase.auth.signOut();
       setIsAuthenticated(false);
+      setSaveStatus(null);
       toast({
         title: "Logget ud",
         description: "Du er nu logget ud",
@@ -145,11 +148,28 @@ const Admin = () => {
   };
 
   const handleSave = async () => {
+    setSaveStatus(null);
     try {
       // Validate JSON
       console.log('Attempting to parse JSON data...');
-      const parsedData = JSON.parse(data) as SiteData;
-      console.log('JSON parsed successfully:', parsedData);
+      let parsedData: SiteData;
+      
+      try {
+        parsedData = JSON.parse(data) as SiteData;
+        console.log('JSON parsed successfully:', parsedData);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        setSaveStatus({
+          success: false,
+          message: 'Ugyldig JSON formatering. Kontroller syntaksen og prøv igen.'
+        });
+        toast({
+          title: "Fejl ved JSON validering",
+          description: "Ugyldig JSON formatering. Kontroller syntaksen og prøv igen.",
+          variant: "destructive"
+        });
+        return;
+      }
       
       setIsSaving(true);
       // Save to Supabase
@@ -158,24 +178,35 @@ const Admin = () => {
       
       if (success) {
         console.log('Data saved successfully!');
+        setSaveStatus({
+          success: true,
+          message: 'Ændringer gemt! Hjemmesiden er opdateret med dine ændringer.'
+        });
         toast({
           title: "Ændringer gemt!",
           description: "Hjemmesiden er opdateret med dine ændringer.",
         });
       } else {
         console.error('Failed to update data');
+        setSaveStatus({
+          success: false,
+          message: 'Kunne ikke gemme data i databasen. Prøv igen senere.'
+        });
         throw new Error("Failed to update data");
       }
-      
-      setIsSaving(false);
     } catch (error) {
       console.error('Error saving data:', error);
-      setIsSaving(false);
+      setSaveStatus({
+        success: false,
+        message: 'Fejl ved gemning: ' + (error instanceof Error ? error.message : String(error))
+      });
       toast({
         title: "Fejl ved gemning",
         description: "Kontroller JSON-formateringen og prøv igen.",
         variant: "destructive"
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -271,6 +302,17 @@ const Admin = () => {
           </Alert>
         )}
         
+        {saveStatus && (
+          <Alert className={`mb-4 ${saveStatus.success ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+            {saveStatus.success ? 
+              <CheckCircle2 className="h-4 w-4 text-green-600" /> : 
+              <AlertCircle className="h-4 w-4 text-red-600" />
+            }
+            <AlertTitle>{saveStatus.success ? 'Success' : 'Fejl'}</AlertTitle>
+            <AlertDescription>{saveStatus.message}</AlertDescription>
+          </Alert>
+        )}
+        
         <Tabs defaultValue="editor" className="mb-6">
           <TabsList className="w-full max-w-md mx-auto grid grid-cols-2 mb-4">
             <TabsTrigger value="editor">JSON Editor</TabsTrigger>
@@ -296,6 +338,7 @@ const Admin = () => {
                   <Button 
                     onClick={handleSave}
                     disabled={isSaving}
+                    className="bg-green-600 hover:bg-green-700"
                   >
                     {isSaving ? 'Gemmer...' : 'Gem Ændringer'}
                   </Button>

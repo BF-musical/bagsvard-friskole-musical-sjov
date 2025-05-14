@@ -52,12 +52,11 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
     }
     
     if (existingData && existingData.length > 0) {
-      // Update existing record
+      // Update existing record - removing the updated_at field since it doesn't exist in our schema
       const { error } = await supabase
         .from('site_content')
         .update({ 
-          content: newData,
-          updated_at: new Date().toISOString()
+          content: newData
         })
         .eq('id', existingData[0].id);
         
