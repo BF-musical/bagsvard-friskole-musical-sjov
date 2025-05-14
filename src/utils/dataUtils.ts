@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import siteData from '../data/siteData.json';
 import type { SiteData } from '@/lib/supabase';
@@ -56,7 +57,7 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
         .from('site_content')
         .update({ 
           content: newData,
-          created_at: new Date().toISOString()
+          updated_at: new Date().toISOString()
         })
         .eq('id', existingData[0].id);
         
@@ -71,8 +72,7 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
       const { error } = await supabase
         .from('site_content')
         .insert({ 
-          content: newData,
-          created_at: new Date().toISOString()
+          content: newData
         });
         
       if (error) {

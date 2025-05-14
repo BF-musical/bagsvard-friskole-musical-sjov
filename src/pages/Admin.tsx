@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -53,7 +54,17 @@ const Admin = () => {
       console.log('Fetching data for Admin page...');
       const siteData = await getSiteData();
       console.log('Received data:', siteData);
-      setData(JSON.stringify(siteData, null, 2));
+      
+      if (siteData) {
+        setData(JSON.stringify(siteData, null, 2));
+      } else {
+        toast({
+          title: "Ingen data fundet",
+          description: "Der blev ikke fundet nogen data. Klik på 'Initialize Database' knappen.",
+          variant: "destructive"
+        });
+        setData(JSON.stringify({}, null, 2));
+      }
       setIsLoading(false);
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -103,7 +114,7 @@ const Admin = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Password is now "musical2024" 
+    // Password is "musical2024" 
     if (password === 'musical2024') {
       setIsAuthenticated(true);
       toast({
@@ -136,18 +147,23 @@ const Admin = () => {
   const handleSave = async () => {
     try {
       // Validate JSON
+      console.log('Attempting to parse JSON data...');
       const parsedData = JSON.parse(data) as SiteData;
+      console.log('JSON parsed successfully:', parsedData);
       
       setIsSaving(true);
       // Save to Supabase
+      console.log('Attempting to update site data...');
       const success = await updateSiteData(parsedData);
       
       if (success) {
+        console.log('Data saved successfully!');
         toast({
           title: "Ændringer gemt!",
           description: "Hjemmesiden er opdateret med dine ændringer.",
         });
       } else {
+        console.error('Failed to update data');
         throw new Error("Failed to update data");
       }
       

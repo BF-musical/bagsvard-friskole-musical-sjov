@@ -28,8 +28,7 @@ export const initializeSupabaseData = async () => {
       const { error: insertError } = await supabase
         .from('site_content')
         .insert({
-          content: siteData,
-          created_at: new Date().toISOString()
+          content: siteData
         });
       
       if (insertError) {
