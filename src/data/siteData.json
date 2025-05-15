@@ -10,7 +10,6 @@
     "subtitle": "\"Drømmenes Land\"",
     "description": "Oplev magien, musikken og de fantastiske præstationer fra Bagsværd Friskoles elever i dette års skolemusical!",
     "buttons": {
-      "primary": "Køb billetter",
       "secondary": "Se tider"
     },
     "image": "/placeholder.svg"
@@ -94,7 +93,6 @@
       { "type": "Børn (under 12 år)", "price": "25 kr" },
       { "type": "Familiebillet (2 voksne + 2 børn)", "price": "120 kr" }
     ],
-    "ticketNote": "Billetterne kan købes online eller i skolens kontor",
     "address": {
       "name": "Bagsværd Friskole",
       "street": "Skolevej 1",
@@ -126,10 +124,6 @@
       "submittingButton": "Sender..."
     },
     "contactInfo": {
-      "phone": {
-        "number": "+45 12 34 56 78",
-        "hours": "Mandag-Fredag: 9:00-15:00"
-      },
       "email": {
         "address": "musical@bagsvaerd-friskole.dk",
         "note": "Vi svarer normalt inden for 24 timer"
@@ -143,5 +137,12 @@
   },
   "footer": {
     "copyright": "Alle rettigheder forbeholdes."
+  },
+  "musical": {
+    "blue": "#3A86FF",
+    "orange": "#FF8A00",
+    "yellow": "#FFC53A",
+    "pink": "#FF3A8C",
+    "light": "#F9F7F3"
   }
 }

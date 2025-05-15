@@ -23,6 +23,7 @@ const Admin = () => {
   const [session, setSession] = useState<any>(null);
   const [initMessage, setInitMessage] = useState<string>('');
   const [saveStatus, setSaveStatus] = useState<{success: boolean, message: string} | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('editor');
   const [activeGuideTab, setActiveGuideTab] = useState<string>('general');
 
   useEffect(() => {
@@ -229,8 +230,8 @@ const Admin = () => {
     "subtitle": "\\\"Drømmenes Land\\\"",     // Undertitel (brug \\ før anførselstegn)
     "description": "Oplev magien...",         // Beskrivelse
     "buttons": {
-      "primary": "Køb billetter",             // Tekst på primær knap
-      "secondary": "Se tider"                 // Tekst på sekundær knap
+      "primary": "Køb billetter",             // Tekst på primær knap (fjern hele linjen hvis knappen ikke skal vises)
+      "secondary": "Se tider"                 // Tekst på sekundær knap (fjern hele linjen hvis knappen ikke skal vises)
     },
     "image": "/dit-billede.jpg"               // Sti til hero-billede
   }
@@ -316,7 +317,7 @@ const Admin = () => {
       },
       // Tilføj flere billettyper efter behov...
     ],
-    "ticketNote": "Billetterne kan købes online...",   // Note om billetter
+    "ticketNote": "Billetterne kan købes online...",   // Note om billetter (kan fjernes hvis ikke nødvendig)
     "address": {                                       // Adresse
       "name": "Bagsværd Friskole",
       "street": "Skolevej 1",
@@ -344,15 +345,15 @@ const Admin = () => {
       "submittingButton": "Sender..."                   // Tekst mens besked sendes
     },
     "contactInfo": {
-      "phone": {
+      "phone": {                                       // Fjern hele phone objektet hvis du ikke vil vise telefon
         "number": "+45 12 34 56 78",                   // Telefonnummer
         "hours": "Mandag-Fredag: 9:00-15:00"           // Åbningstider
       },
-      "email": {
+      "email": {                                       // Fjern hele email objektet hvis du ikke vil vise email
         "address": "musical@bagsvaerd-friskole.dk",    // Email
         "note": "Vi svarer normalt inden for 24 timer" // Note om svartid
       },
-      "address": {                                     // Adresse (samme format som i info)
+      "address": {                                     // Fjern hele address objektet hvis du ikke vil vise adresse
         "name": "Bagsværd Friskole",
         "street": "Skolevej 1",
         "city": "2880 Bagsværd"
@@ -361,8 +362,7 @@ const Admin = () => {
   }
 }`;
         case 'colors':
-          return `// For at ændre farver på hjemmesiden, kan du ændre disse værdier i "musical" sektion:
-{
+          return `{
   "musical": {
     "blue": "#3A86FF",     // Primær blå farve
     "orange": "#FF8A00",   // Orange accentfarve
@@ -370,9 +370,7 @@ const Admin = () => {
     "pink": "#FF3A8C",     // Pink accentfarve
     "light": "#F9F7F3"     // Lysegrå baggrundsfarve
   }
-}
-
-// Derefter skal du køre "yarn build" og "yarn dev" igen for at se ændringerne.`;
+}`;
         default:
           return '';
       }
@@ -454,7 +452,7 @@ const Admin = () => {
           </Alert>
         )}
         
-        <Tabs defaultValue="editor" className="mb-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
           <TabsList className="w-full max-w-md mx-auto grid grid-cols-2 mb-4">
             <TabsTrigger value="editor">JSON Editor</TabsTrigger>
             <TabsTrigger value="guide">Vejledning</TabsTrigger>
@@ -517,62 +515,22 @@ const Admin = () => {
                     </p>
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-                      <TabsTrigger 
-                        value="general" 
-                        onClick={() => setActiveGuideTab('general')}
-                        className={`border ${activeGuideTab === 'general' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Generelt
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="hero" 
-                        onClick={() => setActiveGuideTab('hero')}
-                        className={`border ${activeGuideTab === 'hero' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Hero
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="about" 
-                        onClick={() => setActiveGuideTab('about')}
-                        className={`border ${activeGuideTab === 'about' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Om
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="gallery" 
-                        onClick={() => setActiveGuideTab('gallery')}
-                        className={`border ${activeGuideTab === 'gallery' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Galleri
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="cast" 
-                        onClick={() => setActiveGuideTab('cast')}
-                        className={`border ${activeGuideTab === 'cast' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Medvirkende
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="info" 
-                        onClick={() => setActiveGuideTab('info')}
-                        className={`border ${activeGuideTab === 'info' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Information
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="contact" 
-                        onClick={() => setActiveGuideTab('contact')}
-                        className={`border ${activeGuideTab === 'contact' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Kontakt
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="colors" 
-                        onClick={() => setActiveGuideTab('colors')}
-                        className={`border ${activeGuideTab === 'colors' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                      >
-                        Farver
-                      </TabsTrigger>
+                      {['general', 'hero', 'about', 'gallery', 'cast', 'info', 'contact', 'colors'].map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setActiveGuideTab(tab)}
+                          className={`border ${activeGuideTab === tab ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                        >
+                          {tab === 'general' ? 'Generelt' : 
+                           tab === 'hero' ? 'Hero' :
+                           tab === 'about' ? 'Om' :
+                           tab === 'gallery' ? 'Galleri' :
+                           tab === 'cast' ? 'Medvirkende' :
+                           tab === 'info' ? 'Information' :
+                           tab === 'contact' ? 'Kontakt' :
+                           tab === 'colors' ? 'Farver' : tab}
+                        </button>
+                      ))}
                     </div>
                     
                     <div className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
@@ -601,6 +559,19 @@ const Admin = () => {
                       <li>Adskil egenskaber med komma (<code>,</code>)</li>
                       <li>Brug ikke komma efter den sidste egenskab i et objekt eller array</li>
                       <li>Hvis du vil bruge anførselstegn i en tekst, skal de escapes med en backslash: <code>\"Drømmenes Land\"</code></li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2">Dynamisk fjernelse af elementer</h3>
+                    <p className="mb-2">
+                      Du kan fjerne elementer på hjemmesiden ved at fjerne deres data i JSON'en:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>For at fjerne en knap (f.eks. "Køb billetter"), fjern linjen med <code>"primary": "Køb billetter"</code></li>
+                      <li>For at fjerne telefon i kontaktsektionen, fjern hele <code>"phone": {...}</code> objektet</li>
+                      <li>For at fjerne et galleri-billede, fjern det pågældende objekt fra <code>"images"</code> arrayet</li>
+                      <li>Alle sektioner tilpasser sig automatisk baseret på, hvilke data der er tilgængelige</li>
                     </ul>
                   </div>
                 </div>

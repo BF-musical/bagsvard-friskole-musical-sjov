@@ -1,25 +1,16 @@
-
 export interface SiteData {
   general: {
     schoolName: string;
     musicalName: string;
     year: string;
-    colors?: {
-      blue?: string;
-      orange?: string;
-      yellow?: string;
-      pink?: string;
-      light?: string;
-      // Add more custom colors as needed
-    };
   };
   hero: {
     title: string;
     subtitle: string;
     description: string;
     buttons: {
-      primary: string;
-      secondary: string;
+      primary?: string;
+      secondary?: string;
     };
     image: string;
   };
@@ -64,7 +55,7 @@ export interface SiteData {
       type: string;
       price: string;
     }[];
-    ticketNote: string;
+    ticketNote?: string;
     address: {
       name: string;
       street: string;
@@ -87,21 +78,28 @@ export interface SiteData {
     };
     contactInfo: {
       phone?: {
-        number?: string;
-        hours?: string;
+        number: string;
+        hours: string;
       };
       email?: {
-        address?: string;
-        note?: string;
+        address: string;
+        note: string;
       };
       address?: {
-        name?: string;
-        street?: string;
-        city?: string;
+        name: string;
+        street: string;
+        city: string;
       };
     };
   };
   footer: {
     copyright: string;
+  };
+  musical?: {
+    blue: string;
+    orange: string;
+    yellow: string;
+    pink: string;
+    light: string;
   };
 }

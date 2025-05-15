@@ -10,10 +10,7 @@ const Hero = () => {
     title: "",
     subtitle: "",
     description: "",
-    buttons: {
-      primary: "",
-      secondary: ""
-    },
+    buttons: {},
     image: ""
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -65,14 +62,14 @@ const Hero = () => {
               {heroData.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              {heroData.buttons.primary && (
+              {heroData.buttons?.primary && (
                 <Link to="/location">
                   <Button className="bg-musical-orange hover:bg-musical-orange/90 text-white">
                     {heroData.buttons.primary}
                   </Button>
                 </Link>
               )}
-              {heroData.buttons.secondary && (
+              {heroData.buttons?.secondary && (
                 <Button 
                   variant="outline" 
                   className="border-musical-blue text-musical-blue hover:bg-musical-blue/10"

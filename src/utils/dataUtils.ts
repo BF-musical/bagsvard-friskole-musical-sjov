@@ -26,7 +26,8 @@ export const getSiteData = async (): Promise<SiteData> => {
     }
     
     console.log('Successfully fetched data from Supabase');
-    return data[0].content as SiteData;
+    // Safely cast the content to SiteData after converting from Json
+    return data[0].content as unknown as SiteData;
   } catch (error) {
     console.error('Failed to fetch site data:', error);
     console.log('Falling back to local data due to error');
@@ -52,10 +53,10 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
     }
     
     if (existingData && existingData.length > 0) {
-      // Update existing record
+      // Update existing record - cast to Json type for Supabase
       const { error } = await supabase
         .from('site_content')
-        .update({ content: newData })
+        .update({ content: newData as unknown as Json })
         .eq('id', existingData[0].id);
         
       if (error) {
@@ -65,10 +66,10 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
       
       console.log('Data updated successfully');
     } else {
-      // Insert new record
+      // Insert new record - cast to Json type for Supabase
       const { error } = await supabase
         .from('site_content')
-        .insert({ content: newData });
+        .insert([{ content: newData as unknown as Json }]);
         
       if (error) {
         console.error('Error inserting data in Supabase:', error);
