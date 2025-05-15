@@ -415,7 +415,7 @@ const Admin = () => {
     );
   }
 
-  // Fixed: Changed the function to not use arrow function with immediate parentheses
+  // Fixed: Changed the function to use curly braces
   const renderAdminPanel = () => {
     return (
       <div className="min-h-screen bg-gray-100 p-4">
@@ -547,6 +547,23 @@ const Admin = () => {
                       </p>
                       <p className="text-sm text-gray-600">
                         Upload dine billeder til Supabase Storage eller en anden billed-hostingtjeneste og brug URL'en.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">Farver</h3>
+                      <p className="mb-2">
+                        Du kan ændre alle farver på hjemmesiden ved at redigere farveværdierne i "musical" objektet:
+                      </p>
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li><code>"blue"</code>: Primærfarve brugt til overskrifter</li>
+                        <li><code>"orange"</code>: Accentfarve brugt til knapper</li>
+                        <li><code>"yellow"</code>: Accentfarve brugt til fremhævninger</li>
+                        <li><code>"pink"</code>: Accentfarve brugt til detaljer</li>
+                        <li><code>"light"</code>: Baggrundsfarve til lyse sektioner</li>
+                      </ul>
+                      <p className="mt-2 text-sm text-gray-600">
+                        Farverne kan angives som HEX-koder (f.eks. #3A86FF) eller med navne (f.eks. "blue").
                       </p>
                     </div>
                     

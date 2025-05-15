@@ -1,3 +1,4 @@
+
 export interface SiteData {
   general: {
     schoolName: string;
@@ -95,7 +96,7 @@ export interface SiteData {
   footer: {
     copyright: string;
   };
-  musical?: {
+  musical: {
     blue: string;
     orange: string;
     yellow: string;

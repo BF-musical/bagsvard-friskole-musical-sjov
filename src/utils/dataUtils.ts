@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import siteData from '../data/siteData.json';
 import type { SiteData } from '@/lib/supabase';
@@ -125,4 +126,10 @@ export const getGeneralData = async () => {
 export const getFooterData = async () => {
   const data = await getSiteData();
   return data.footer;
+};
+
+// Add a new helper function to get color data
+export const getMusicalColors = async () => {
+  const data = await getSiteData();
+  return data.musical;
 };
