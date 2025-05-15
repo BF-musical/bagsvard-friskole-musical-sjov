@@ -1,19 +1,17 @@
 
-import { createClient } from '@supabase/supabase-js';
-
-// These environment variables will be provided when you connect to Supabase in Lovable
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-// Create a Supabase client instance
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-// Types
-export type SiteData = {
+export interface SiteData {
   general: {
     schoolName: string;
     musicalName: string;
     year: string;
+    colors?: {
+      blue?: string;
+      orange?: string;
+      yellow?: string;
+      pink?: string;
+      light?: string;
+      // Add more custom colors as needed
+    };
   };
   hero: {
     title: string;
@@ -88,29 +86,22 @@ export type SiteData = {
       submittingButton: string;
     };
     contactInfo: {
-      phone: {
-        number: string;
-        hours: string;
+      phone?: {
+        number?: string;
+        hours?: string;
       };
-      email: {
-        address: string;
-        note: string;
+      email?: {
+        address?: string;
+        note?: string;
       };
-      address: {
-        name: string;
-        street: string;
-        city: string;
+      address?: {
+        name?: string;
+        street?: string;
+        city?: string;
       };
     };
   };
   footer: {
     copyright: string;
   };
-  musical?: {
-    blue: string;
-    orange: string;
-    yellow: string;
-    pink: string;
-    light: string;
-  };
-};
+}

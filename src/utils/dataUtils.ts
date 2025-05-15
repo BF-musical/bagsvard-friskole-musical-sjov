@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import siteData from '../data/siteData.json';
 import type { SiteData } from '@/lib/supabase';

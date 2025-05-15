@@ -65,16 +65,22 @@ const Hero = () => {
               {heroData.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <Button className="bg-musical-orange hover:bg-musical-orange/90 text-white">
-                {heroData.buttons.primary}
-              </Button>
-              <Button 
-                variant="outline" 
-                className="border-musical-blue text-musical-blue hover:bg-musical-blue/10"
-                onClick={scrollToInfo}
-              >
-                {heroData.buttons.secondary}
-              </Button>
+              {heroData.buttons.primary && (
+                <Link to="/location">
+                  <Button className="bg-musical-orange hover:bg-musical-orange/90 text-white">
+                    {heroData.buttons.primary}
+                  </Button>
+                </Link>
+              )}
+              {heroData.buttons.secondary && (
+                <Button 
+                  variant="outline" 
+                  className="border-musical-blue text-musical-blue hover:bg-musical-blue/10"
+                  onClick={scrollToInfo}
+                >
+                  {heroData.buttons.secondary}
+                </Button>
+              )}
             </div>
           </div>
           <div className="mt-8 md:mt-0 flex justify-center md:justify-end">
