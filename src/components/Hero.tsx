@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { getHeroData } from "@/utils/dataUtils";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { getHeroData } from '@/utils/dataUtils';
 import type { SiteData } from '@/lib/supabase';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const [heroData, setHeroData] = useState<SiteData['hero']>({
@@ -16,7 +17,7 @@ const Hero = () => {
     image: ""
   });
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,56 +32,62 @@ const Hero = () => {
     
     fetchData();
   }, []);
-  
+
   if (isLoading) {
     return (
-      <div className="relative bg-gradient-to-b from-musical-light to-white py-16 md:py-24">
+      <section className="py-16 bg-musical-light">
         <div className="container mx-auto px-4 text-center">
           Loading hero section...
         </div>
-      </div>
+      </section>
     );
   }
-  
+
+  const scrollToInfo = () => {
+    const infoSection = document.getElementById('info');
+    if (infoSection) {
+      infoSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="relative bg-gradient-to-b from-musical-light to-white py-16 md:py-24">
+    <section className="py-20 bg-musical-light">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-          <div className="mb-8 animate-float">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 musical-header">
+              {heroData.title}
+            </h1>
+            <h2 className="text-2xl md:text-3xl font-semibold text-musical-orange mb-6">
+              {heroData.subtitle}
+            </h2>
+            <p className="text-gray-600 mb-8 text-lg max-w-lg mx-auto md:mx-0">
+              {heroData.description}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              <Button className="bg-musical-orange hover:bg-musical-orange/90 text-white">
+                {heroData.buttons.primary}
+              </Button>
+              <Button 
+                variant="outline" 
+                className="border-musical-blue text-musical-blue hover:bg-musical-blue/10"
+                onClick={scrollToInfo}
+              >
+                {heroData.buttons.secondary}
+              </Button>
+            </div>
+          </div>
+          <div className="mt-8 md:mt-0 flex justify-center md:justify-end">
             <img 
               src={heroData.image} 
-              alt="Musical illustration" 
-              className="h-32 w-32 md:h-40 md:w-40 object-contain"
+              alt="Musical Promotion" 
+              className="rounded-lg shadow-xl max-w-full h-auto animate-float" 
+              style={{ maxHeight: '500px' }}
             />
-          </div>
-          
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            <span className="block font-pacifico text-musical-blue">{heroData.title}</span>
-            <span className="block text-musical-orange mt-2">{heroData.subtitle}</span>
-          </h1>
-          
-          <p className="text-lg md:text-xl text-gray-700 mb-8">
-            {heroData.description}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button 
-              variant="outline"
-              className="border-musical-orange text-musical-orange hover:bg-musical-orange/10 font-medium px-8 py-3 rounded-full"
-              size="lg"
-            >
-              {heroData.buttons.secondary}
-            </Button>
           </div>
         </div>
       </div>
-      
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-0 transform">
-        <svg width="100%" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 24C166.667 -8 333.333 -8 500 24C666.667 56 833.333 56 1000 24C1166.67 -8 1333.33 -8 1500 24C1666.67 56 1833.33 56 2000 24V48H0V24Z" fill="white"/>
-        </svg>
-      </div>
-    </div>
+    </section>
   );
 };
 

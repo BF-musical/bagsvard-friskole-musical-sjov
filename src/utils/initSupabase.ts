@@ -1,49 +1,61 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import siteData from '../data/siteData.json';
+import siteData from '@/data/siteData.json';
 
-/**
- * Initialize the Supabase database with the default site data
- * This function can be called from the Admin page or during initial setup
- */
 export const initializeSupabaseData = async () => {
   try {
     console.log('Starting database initialization...');
     
     // Check if data already exists
-    const { data, error } = await supabase
+    const { data: existingData, error: checkError } = await supabase
       .from('site_content')
-      .select('*')
+      .select('id')
+      .order('created_at', { ascending: false })
       .limit(1);
-    
-    if (error) {
-      console.error('Error checking for existing data:', error);
-      return { success: false, message: 'Failed to check for existing data: ' + error.message };
+      
+    if (checkError) {
+      console.error('Error checking existing data:', checkError);
+      return { 
+        success: false, 
+        message: `Error checking existing data: ${checkError.message}` 
+      };
     }
     
-    // If no data exists, insert the default data
-    if (!data || data.length === 0) {
-      console.log('No existing data found, inserting default data...');
-      
-      const { error: insertError } = await supabase
-        .from('site_content')
-        .insert({
-          content: siteData
-        });
-      
-      if (insertError) {
-        console.error('Error inserting initial data:', insertError);
-        return { success: false, message: 'Failed to insert initial data: ' + insertError.message };
-      }
-      
-      console.log('Initial data inserted successfully');
-      return { success: true, message: 'Initial data inserted successfully' };
+    if (existingData && existingData.length > 0) {
+      console.log('Data already exists. No initialization needed.');
+      return { 
+        success: true, 
+        message: 'Database already contains site data. No initialization needed.' 
+      };
     }
     
-    console.log('Data already exists, no initialization needed');
-    return { success: true, message: 'Data already exists, no initialization needed' };
+    // Insert initial data
+    console.log('Data not found. Adding initial data...');
+    const { error: insertError } = await supabase
+      .from('site_content')
+      .insert({ 
+        content: siteData
+      });
+      
+    if (insertError) {
+      console.error('Error inserting initial data:', insertError);
+      return { 
+        success: false, 
+        message: `Error initializing database: ${insertError.message}` 
+      };
+    }
+    
+    console.log('Database initialized successfully!');
+    return { 
+      success: true, 
+      message: 'Database initialized successfully with initial site data!' 
+    };
   } catch (error) {
-    console.error('Failed to initialize data:', error);
-    return { success: false, message: 'An unexpected error occurred: ' + (error instanceof Error ? error.message : String(error)) };
+    console.error('Unexpected error during initialization:', error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    return { 
+      success: false, 
+      message: `Unexpected error: ${errorMsg}` 
+    };
   }
 };

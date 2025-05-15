@@ -23,6 +23,7 @@ const Admin = () => {
   const [session, setSession] = useState<any>(null);
   const [initMessage, setInitMessage] = useState<string>('');
   const [saveStatus, setSaveStatus] = useState<{success: boolean, message: string} | null>(null);
+  const [activeGuideTab, setActiveGuideTab] = useState<string>('general');
 
   useEffect(() => {
     // Check if user is already authenticated with Supabase
@@ -212,26 +213,166 @@ const Admin = () => {
 
   const getFormattedExample = (section: string) => {
     try {
-      const siteData = JSON.parse(data);
       switch(section) {
         case 'general':
           return `{
-  "schoolName": "Bagsværd Friskole", // Skolens navn
-  "musicalName": "Drømmenes Land",   // Musicalens navn
-  "year": "2023"                     // Årstal
+  "general": {
+    "schoolName": "Bagsværd Friskole", // Skolens navn
+    "musicalName": "Drømmenes Land",   // Musicalens navn
+    "year": "2023"                     // Årstal
+  }
 }`;
-        case 'location':
+        case 'hero':
           return `{
-  "name": "Bagsværd Friskole",    // Stedets navn
-  "street": "Skolevej 1",         // Gadenavn og nummer
-  "city": "2880 Bagsværd"         // Postnummer og by
+  "hero": {
+    "title": "Årets Musical",                 // Overskrift
+    "subtitle": "\\\"Drømmenes Land\\\"",     // Undertitel (brug \\ før anførselstegn)
+    "description": "Oplev magien...",         // Beskrivelse
+    "buttons": {
+      "primary": "Køb billetter",             // Tekst på primær knap
+      "secondary": "Se tider"                 // Tekst på sekundær knap
+    },
+    "image": "/dit-billede.jpg"               // Sti til hero-billede
+  }
+}`;
+        case 'about':
+          return `{
+  "about": {
+    "title": "Om Musicalen",
+    "subtitle": "Årets forestilling...",
+    "heading": "Drømmenes Land",
+    "paragraphs": [
+      "Første afsnit med tekst...",          // Hvert element er et afsnit
+      "Andet afsnit med tekst...",
+      "Tredje afsnit med tekst..."
+    ],
+    "stats": [
+      {
+        "value": "12+",                     // Statistik værdi
+        "label": "Originale sange"          // Statistik label
+      },
+      {
+        "value": "45",
+        "label": "Medvirkende"
+      }
+    ],
+    "image": "/about-image.jpg"             // Sti til about-billede
+  }
+}`;
+        case 'gallery':
+          return `{
+  "gallery": {
+    "title": "Galleri",
+    "subtitle": "Glimt fra prøver...",
+    "images": [
+      { "src": "/billede1.jpg", "alt": "Forestillingsbillede 1" },
+      { "src": "/billede2.jpg", "alt": "Forestillingsbillede 2" },
+      // Tilføj flere billeder efter behov...
+    ]
+  }
 }`;
         case 'cast':
           return `{
-  "name": "Emma Hansen",    // Personens navn
-  "role": "Luna",           // Rolle i forestillingen
-  "grade": "8. klasse"      // Klassetrin
+  "cast": {
+    "title": "Medvirkende",
+    "subtitle": "Mød de talentfulde elever...",
+    "groups": {
+      "skuespillere": [                             // Kategori navn
+        { 
+          "name": "Emma Hansen",                    // Person navn
+          "role": "Luna",                           // Personens rolle
+          "grade": "8. klasse"                      // Klassetrin
+        },
+        // Tilføj flere personer efter behov...
+      ],
+      "dansere": [                                  // Ny kategori
+        { 
+          "name": "Isabella Møller", 
+          "role": "Drømmefeen", 
+          "grade": "6. klasse" 
+        },
+        // Tilføj flere personer efter behov...
+      ]
+      // Du kan tilføje flere kategorier efter behov
+    }
+  }
 }`;
+        case 'info':
+          return `{
+  "info": {
+    "title": "Information",
+    "subtitle": "Alt hvad du behøver at vide...",
+    "performances": [                                   // Forestillinger
+      { 
+        "date": "Torsdag d. 15. juni 2023",            // Dato
+        "time": "19:00 - 21:00"                        // Tidspunkt
+      },
+      // Tilføj flere forestillinger efter behov...
+    ],
+    "tickets": [                                       // Billettyper
+      { 
+        "type": "Voksne",                              // Billettype
+        "price": "50 kr"                               // Pris
+      },
+      // Tilføj flere billettyper efter behov...
+    ],
+    "ticketNote": "Billetterne kan købes online...",   // Note om billetter
+    "address": {                                       // Adresse
+      "name": "Bagsværd Friskole",
+      "street": "Skolevej 1",
+      "city": "2880 Bagsværd"
+    },
+    "practical": [                                     // Praktisk information
+      {
+        "title": "Parkering",                          // Titel på info
+        "content": "Der er begrænset parkering..."     // Indhold
+      },
+      // Tilføj flere praktiske informationer efter behov...
+    ]
+  }
+}`;
+        case 'contact':
+          return `{
+  "contact": {
+    "title": "Kontakt",
+    "subtitle": "Har du spørgsmål...",
+    "form": {
+      "namePlaceholder": "Dit navn",                    // Placeholder til navn
+      "emailPlaceholder": "din@email.dk",               // Placeholder til email
+      "messagePlaceholder": "Skriv din besked her...",  // Placeholder til besked
+      "submitButton": "Send besked",                    // Tekst på send-knap
+      "submittingButton": "Sender..."                   // Tekst mens besked sendes
+    },
+    "contactInfo": {
+      "phone": {
+        "number": "+45 12 34 56 78",                   // Telefonnummer
+        "hours": "Mandag-Fredag: 9:00-15:00"           // Åbningstider
+      },
+      "email": {
+        "address": "musical@bagsvaerd-friskole.dk",    // Email
+        "note": "Vi svarer normalt inden for 24 timer" // Note om svartid
+      },
+      "address": {                                     // Adresse (samme format som i info)
+        "name": "Bagsværd Friskole",
+        "street": "Skolevej 1",
+        "city": "2880 Bagsværd"
+      }
+    }
+  }
+}`;
+        case 'colors':
+          return `// For at ændre farver på hjemmesiden, kan du ændre disse værdier i "musical" sektion:
+{
+  "musical": {
+    "blue": "#3A86FF",     // Primær blå farve
+    "orange": "#FF8A00",   // Orange accentfarve
+    "yellow": "#FFC53A",   // Gul accentfarve
+    "pink": "#FF3A8C",     // Pink accentfarve
+    "light": "#F9F7F3"     // Lysegrå baggrundsfarve
+  }
+}
+
+// Derefter skal du køre "yarn build" og "yarn dev" igen for at se ændringerne.`;
         default:
           return '';
       }
@@ -325,7 +466,7 @@ const Admin = () => {
                 <div className="mb-4">
                   <h2 className="text-xl font-semibold mb-2">Rediger Indhold</h2>
                   <p className="text-gray-600 text-sm mb-4">
-                    Rediger JSON data direkte. Ændre tekst, billede URLs, og andre oplysninger.
+                    Rediger JSON data direkte. Ændre tekst, billede URLs, farver, og andre oplysninger.
                     Alle ændringer gemmes i Supabase databasen.
                   </p>
                   <Textarea
@@ -356,7 +497,7 @@ const Admin = () => {
                   <div>
                     <h3 className="font-semibold text-lg mb-2">Kom i gang</h3>
                     <p className="mb-2">
-                      Alle tekster, billeder og andre oplysninger er gemt i et JSON-format i Supabase databasen. 
+                      Alle tekster, billeder, farver og andre oplysninger er gemt i et JSON-format i Supabase databasen. 
                       Du kan redigere det hele ved at ændre værdierne i JSON-editoren.
                     </p>
                     <Alert className="bg-musical-light border-musical-blue">
@@ -368,13 +509,75 @@ const Admin = () => {
                       </AlertDescription>
                     </Alert>
                   </div>
-                  
+
                   <div>
-                    <h3 className="font-semibold text-lg mb-2">Generelle oplysninger</h3>
-                    <p className="mb-2">Under "general" kan du ændre skolens navn, musicalens navn og årstal:</p>
-                    <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
-                      {getFormattedExample('general')}
-                    </pre>
+                    <h3 className="font-semibold text-lg mb-2">Hvad kan jeg redigere?</h3>
+                    <p className="mb-4">
+                      Du kan redigere ALT indhold på siden via JSON-editoren, herunder:
+                    </p>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                      <TabsTrigger 
+                        value="general" 
+                        onClick={() => setActiveGuideTab('general')}
+                        className={`border ${activeGuideTab === 'general' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Generelt
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="hero" 
+                        onClick={() => setActiveGuideTab('hero')}
+                        className={`border ${activeGuideTab === 'hero' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Hero
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="about" 
+                        onClick={() => setActiveGuideTab('about')}
+                        className={`border ${activeGuideTab === 'about' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Om
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="gallery" 
+                        onClick={() => setActiveGuideTab('gallery')}
+                        className={`border ${activeGuideTab === 'gallery' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Galleri
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="cast" 
+                        onClick={() => setActiveGuideTab('cast')}
+                        className={`border ${activeGuideTab === 'cast' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Medvirkende
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="info" 
+                        onClick={() => setActiveGuideTab('info')}
+                        className={`border ${activeGuideTab === 'info' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Information
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="contact" 
+                        onClick={() => setActiveGuideTab('contact')}
+                        className={`border ${activeGuideTab === 'contact' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Kontakt
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="colors" 
+                        onClick={() => setActiveGuideTab('colors')}
+                        className={`border ${activeGuideTab === 'colors' ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                      >
+                        Farver
+                      </TabsTrigger>
+                    </div>
+                    
+                    <div className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
+                      <pre>{getFormattedExample(activeGuideTab)}</pre>
+                    </div>
                   </div>
                   
                   <div>
@@ -389,22 +592,16 @@ const Admin = () => {
                   </div>
                   
                   <div>
-                    <h3 className="font-semibold text-lg mb-2">Skolens placering</h3>
-                    <p className="mb-2">Du kan opdatere skolens adresse under "info.address":</p>
-                    <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
-                      {getFormattedExample('location')}
-                    </pre>
-                    <p className="mt-2">
-                      For at opdatere kortet skal du også ændre iframe-koden i Location.tsx filen.
+                    <h3 className="font-semibold text-lg mb-2">JSON-formatering</h3>
+                    <p className="mb-2">
+                      Husk disse regler for korrekt JSON-formatering:
                     </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Medvirkende</h3>
-                    <p className="mb-2">Under "cast.groups" kan du tilføje eller fjerne personer:</p>
-                    <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
-                      {getFormattedExample('cast')}
-                    </pre>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Brug dobbelte anførselstegn (<code>"</code>) omkring alle egenskabsnavne og strengværdier</li>
+                      <li>Adskil egenskaber med komma (<code>,</code>)</li>
+                      <li>Brug ikke komma efter den sidste egenskab i et objekt eller array</li>
+                      <li>Hvis du vil bruge anførselstegn i en tekst, skal de escapes med en backslash: <code>\"Drømmenes Land\"</code></li>
+                    </ul>
                   </div>
                 </div>
               </CardContent>

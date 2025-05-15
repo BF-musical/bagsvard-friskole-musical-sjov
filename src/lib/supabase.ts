@@ -106,4 +106,11 @@ export type SiteData = {
   footer: {
     copyright: string;
   };
+  musical?: {
+    blue: string;
+    orange: string;
+    yellow: string;
+    pink: string;
+    light: string;
+  };
 };

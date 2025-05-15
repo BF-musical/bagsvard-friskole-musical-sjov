@@ -90,18 +90,12 @@ const Info = () => {
               <Card className="bg-white border-none shadow-sm">
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
-                    {infoData.tickets.slice(0, 2).map((ticket, index) => (
-                      <div key={index}>
+                    {infoData.tickets.map((ticket, index) => (
+                      <div key={index} className={index === 2 ? "col-span-2" : ""}>
                         <p className="font-medium">{ticket.type}</p>
                         <p className="text-musical-orange font-semibold">{ticket.price}</p>
                       </div>
                     ))}
-                    {infoData.tickets.length > 2 && (
-                      <div className="col-span-2">
-                        <p className="font-medium">{infoData.tickets[2].type}</p>
-                        <p className="text-musical-orange font-semibold">{infoData.tickets[2].price}</p>
-                      </div>
-                    )}
                   </div>
                   <div className="mt-4 text-sm text-gray-500">
                     <p>{infoData.ticketNote}</p>
@@ -124,9 +118,9 @@ const Info = () => {
                 </p>
                 
                 {infoData.practical.map((item, index) => (
-                  <div key={index}>
+                  <div key={index} className="mb-4 last:mb-0">
                     <h4 className="font-medium mb-2">{item.title}</h4>
-                    <p className="text-gray-700 mb-4">{item.content}</p>
+                    <p className="text-gray-700">{item.content}</p>
                   </div>
                 ))}
               </CardContent>

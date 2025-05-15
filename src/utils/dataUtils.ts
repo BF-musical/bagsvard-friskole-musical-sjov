@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import siteData from '../data/siteData.json';
 import type { SiteData } from '@/lib/supabase';
@@ -52,12 +51,10 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
     }
     
     if (existingData && existingData.length > 0) {
-      // Update existing record - removing the updated_at field since it doesn't exist in our schema
+      // Update existing record
       const { error } = await supabase
         .from('site_content')
-        .update({ 
-          content: newData
-        })
+        .update({ content: newData })
         .eq('id', existingData[0].id);
         
       if (error) {
@@ -70,9 +67,7 @@ export const updateSiteData = async (newData: SiteData): Promise<boolean> => {
       // Insert new record
       const { error } = await supabase
         .from('site_content')
-        .insert({ 
-          content: newData
-        });
+        .insert({ content: newData });
         
       if (error) {
         console.error('Error inserting data in Supabase:', error);
