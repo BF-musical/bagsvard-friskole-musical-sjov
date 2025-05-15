@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { getSiteData, updateSiteData } from '@/utils/dataUtils';
 import { initializeSupabaseData } from '@/utils/initSupabase';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -416,178 +415,181 @@ const Admin = () => {
     );
   }
 
-  const renderAdminPanel = () => (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Musical Hjemmeside Admin</h1>
-          <div className="flex gap-2">
-            <Button 
-              onClick={handleInitializeData}
-              disabled={isInitializing}
-              variant="outline"
-            >
-              {isInitializing ? 'Initializing...' : 'Initialize Database'}
-            </Button>
-            <Button onClick={handleLogout}>Log ud</Button>
+  // Fixed: Changed the function to not use arrow function with immediate parentheses
+  const renderAdminPanel = () => {
+    return (
+      <div className="min-h-screen bg-gray-100 p-4">
+        <div className="container mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold">Musical Hjemmeside Admin</h1>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleInitializeData}
+                disabled={isInitializing}
+                variant="outline"
+              >
+                {isInitializing ? 'Initializing...' : 'Initialize Database'}
+              </Button>
+              <Button onClick={handleLogout}>Log ud</Button>
+            </div>
+          </div>
+          
+          {initMessage && (
+            <Alert className={`mb-4 ${initMessage.includes('Error') ? 'bg-red-50 border-red-500' : 'bg-green-50 border-green-500'}`}>
+              <Info className="h-4 w-4" />
+              <AlertTitle>{initMessage.includes('Error') ? 'Fejl' : 'Success'}</AlertTitle>
+              <AlertDescription>{initMessage}</AlertDescription>
+            </Alert>
+          )}
+          
+          {saveStatus && (
+            <Alert className={`mb-4 ${saveStatus.success ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+              {saveStatus.success ? 
+                <CheckCircle2 className="h-4 w-4 text-green-600" /> : 
+                <AlertCircle className="h-4 w-4 text-red-600" />
+              }
+              <AlertTitle>{saveStatus.success ? 'Success' : 'Fejl'}</AlertTitle>
+              <AlertDescription>{saveStatus.message}</AlertDescription>
+            </Alert>
+          )}
+          
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+            <TabsList className="w-full max-w-md mx-auto grid grid-cols-2 mb-4">
+              <TabsTrigger value="editor">JSON Editor</TabsTrigger>
+              <TabsTrigger value="guide">Vejledning</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="editor">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="mb-4">
+                    <h2 className="text-xl font-semibold mb-2">Rediger Indhold</h2>
+                    <p className="text-gray-600 text-sm mb-4">
+                      Rediger JSON data direkte. Ændre tekst, billede URLs, farver, og andre oplysninger.
+                      Alle ændringer gemmes i Supabase databasen.
+                    </p>
+                    <Textarea
+                      value={data}
+                      onChange={(e) => setData(e.target.value)}
+                      className="font-mono text-sm h-[500px]"
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      {isSaving ? 'Gemmer...' : 'Gem Ændringer'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="guide">
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Sådan redigerer du hjemmesiden</h2>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">Kom i gang</h3>
+                      <p className="mb-2">
+                        Alle tekster, billeder, farver og andre oplysninger er gemt i et JSON-format i Supabase databasen. 
+                        Du kan redigere det hele ved at ændre værdierne i JSON-editoren.
+                      </p>
+                      <Alert className="bg-musical-light border-musical-blue">
+                        <Info className="h-4 w-4" />
+                        <AlertTitle>Vigtig information</AlertTitle>
+                        <AlertDescription>
+                          Husk at gemme dine ændringer ved at klikke på "Gem Ændringer" knappen. 
+                          Ændringerne gemmes øjeblikkeligt i databasen og vises på hjemmesiden.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">Hvad kan jeg redigere?</h3>
+                      <p className="mb-4">
+                        Du kan redigere ALT indhold på siden via JSON-editoren, herunder:
+                      </p>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                        {['general', 'hero', 'about', 'gallery', 'cast', 'info', 'contact', 'colors'].map((tab) => (
+                          <button
+                            key={tab}
+                            onClick={() => setActiveGuideTab(tab)}
+                            className={`border ${activeGuideTab === tab ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
+                          >
+                            {tab === 'general' ? 'Generelt' : 
+                             tab === 'hero' ? 'Hero' :
+                             tab === 'about' ? 'Om' :
+                             tab === 'gallery' ? 'Galleri' :
+                             tab === 'cast' ? 'Medvirkende' :
+                             tab === 'info' ? 'Information' :
+                             tab === 'contact' ? 'Kontakt' :
+                             tab === 'colors' ? 'Farver' : tab}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      <div className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
+                        <pre>{getFormattedExample(activeGuideTab)}</pre>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">Billeder</h3>
+                      <p className="mb-2">
+                        Billeder er defineret som URL'er. Du kan ændre disse til links til dine egne billeder.
+                        For eksempel: <code>"image": "/dit-billede.jpg"</code>
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Upload dine billeder til Supabase Storage eller en anden billed-hostingtjeneste og brug URL'en.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">JSON-formatering</h3>
+                      <p className="mb-2">
+                        Husk disse regler for korrekt JSON-formatering:
+                      </p>
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>Brug dobbelte anførselstegn (<code>"</code>) omkring alle egenskabsnavne og strengværdier</li>
+                        <li>Adskil egenskaber med komma (<code>,</code>)</li>
+                        <li>Brug ikke komma efter den sidste egenskab i et objekt eller array</li>
+                        <li>Hvis du vil bruge anførselstegn i en tekst, skal de escapes med en backslash: <code>"Drømmenes Land"</code></li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">Dynamisk fjernelse af elementer</h3>
+                      <p className="mb-2">
+                        Du kan fjerne elementer på hjemmesiden ved at fjerne deres data i JSON'en:
+                      </p>
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>For at fjerne en knap (f.eks. "Køb billetter"), fjern linjen med <code>"primary": "Køb billetter"</code></li>
+                        <li>For at fjerne telefon i kontaktsektionen, fjern hele <code>"phone": {"{...}"}</code> objektet</li>
+                        <li>For at fjerne et galleri-billede, fjern det pågældende objekt fra <code>"images"</code> arrayet</li>
+                        <li>Alle sektioner tilpasser sig automatisk baseret på, hvilke data der er tilgængelige</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+          
+          <div className="mt-6 text-center text-sm text-gray-500">
+            <p>
+              Ændringer gemmes i Supabase databasen og reflekteres øjeblikkeligt på hjemmesiden.
+            </p>
           </div>
         </div>
-        
-        {initMessage && (
-          <Alert className={`mb-4 ${initMessage.includes('Error') ? 'bg-red-50 border-red-500' : 'bg-green-50 border-green-500'}`}>
-            <Info className="h-4 w-4" />
-            <AlertTitle>{initMessage.includes('Error') ? 'Fejl' : 'Success'}</AlertTitle>
-            <AlertDescription>{initMessage}</AlertDescription>
-          </Alert>
-        )}
-        
-        {saveStatus && (
-          <Alert className={`mb-4 ${saveStatus.success ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
-            {saveStatus.success ? 
-              <CheckCircle2 className="h-4 w-4 text-green-600" /> : 
-              <AlertCircle className="h-4 w-4 text-red-600" />
-            }
-            <AlertTitle>{saveStatus.success ? 'Success' : 'Fejl'}</AlertTitle>
-            <AlertDescription>{saveStatus.message}</AlertDescription>
-          </Alert>
-        )}
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="w-full max-w-md mx-auto grid grid-cols-2 mb-4">
-            <TabsTrigger value="editor">JSON Editor</TabsTrigger>
-            <TabsTrigger value="guide">Vejledning</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="editor">
-            <Card>
-              <CardContent className="p-6">
-                <div className="mb-4">
-                  <h2 className="text-xl font-semibold mb-2">Rediger Indhold</h2>
-                  <p className="text-gray-600 text-sm mb-4">
-                    Rediger JSON data direkte. Ændre tekst, billede URLs, farver, og andre oplysninger.
-                    Alle ændringer gemmes i Supabase databasen.
-                  </p>
-                  <Textarea
-                    value={data}
-                    onChange={(e) => setData(e.target.value)}
-                    className="font-mono text-sm h-[500px]"
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <Button 
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    {isSaving ? 'Gemmer...' : 'Gem Ændringer'}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="guide">
-            <Card>
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Sådan redigerer du hjemmesiden</h2>
-                
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Kom i gang</h3>
-                    <p className="mb-2">
-                      Alle tekster, billeder, farver og andre oplysninger er gemt i et JSON-format i Supabase databasen. 
-                      Du kan redigere det hele ved at ændre værdierne i JSON-editoren.
-                    </p>
-                    <Alert className="bg-musical-light border-musical-blue">
-                      <Info className="h-4 w-4" />
-                      <AlertTitle>Vigtig information</AlertTitle>
-                      <AlertDescription>
-                        Husk at gemme dine ændringer ved at klikke på "Gem Ændringer" knappen. 
-                        Ændringerne gemmes øjeblikkeligt i databasen og vises på hjemmesiden.
-                      </AlertDescription>
-                    </Alert>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Hvad kan jeg redigere?</h3>
-                    <p className="mb-4">
-                      Du kan redigere ALT indhold på siden via JSON-editoren, herunder:
-                    </p>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-                      {['general', 'hero', 'about', 'gallery', 'cast', 'info', 'contact', 'colors'].map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveGuideTab(tab)}
-                          className={`border ${activeGuideTab === tab ? 'bg-musical-light border-musical-blue' : 'border-gray-200'} p-2 text-center rounded`}
-                        >
-                          {tab === 'general' ? 'Generelt' : 
-                           tab === 'hero' ? 'Hero' :
-                           tab === 'about' ? 'Om' :
-                           tab === 'gallery' ? 'Galleri' :
-                           tab === 'cast' ? 'Medvirkende' :
-                           tab === 'info' ? 'Information' :
-                           tab === 'contact' ? 'Kontakt' :
-                           tab === 'colors' ? 'Farver' : tab}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    <div className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
-                      <pre>{getFormattedExample(activeGuideTab)}</pre>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Billeder</h3>
-                    <p className="mb-2">
-                      Billeder er defineret som URL'er. Du kan ændre disse til links til dine egne billeder.
-                      For eksempel: <code>"image": "/dit-billede.jpg"</code>
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Upload dine billeder til Supabase Storage eller en anden billed-hostingtjeneste og brug URL'en.
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">JSON-formatering</h3>
-                    <p className="mb-2">
-                      Husk disse regler for korrekt JSON-formatering:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Brug dobbelte anførselstegn (<code>"</code>) omkring alle egenskabsnavne og strengværdier</li>
-                      <li>Adskil egenskaber med komma (<code>,</code>)</li>
-                      <li>Brug ikke komma efter den sidste egenskab i et objekt eller array</li>
-                      <li>Hvis du vil bruge anførselstegn i en tekst, skal de escapes med en backslash: <code>\"Drømmenes Land\"</code></li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Dynamisk fjernelse af elementer</h3>
-                    <p className="mb-2">
-                      Du kan fjerne elementer på hjemmesiden ved at fjerne deres data i JSON'en:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>For at fjerne en knap (f.eks. "Køb billetter"), fjern linjen med <code>"primary": "Køb billetter"</code></li>
-                      <li>For at fjerne telefon i kontaktsektionen, fjern hele <code>"phone": {...}</code> objektet</li>
-                      <li>For at fjerne et galleri-billede, fjern det pågældende objekt fra <code>"images"</code> arrayet</li>
-                      <li>Alle sektioner tilpasser sig automatisk baseret på, hvilke data der er tilgængelige</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-        
-        <div className="mt-6 text-center text-sm text-gray-500">
-          <p>
-            Ændringer gemmes i Supabase databasen og reflekteres øjeblikkeligt på hjemmesiden.
-          </p>
-        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return renderAdminPanel();
 };
